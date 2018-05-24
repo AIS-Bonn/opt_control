@@ -19,10 +19,10 @@ Marius Beul and Sven Behnke: [Analytical Time-optimal Trajectory Generation and 
 run `opt_control_example` in MATLAB.
 The variable `index_example` selects the example.
 
-example 1 generates a predefined trajectory with two consecutive waypoints for a single axis.  
-example 2 generates a predefined trajectory with two consecutive waypoints for a single axis with changing bounds and infeasible start state for the second waypoint.  
-example 3 generates a predefined trajectory with two consecutive waypoints for two axes.  
-example 4 generates a random trajectory with up to five consecutive waypoints for up to five axes.
+- example 1 generates a predefined trajectory with two consecutive waypoints for a single axis.  
+- example 2 generates a predefined trajectory with two consecutive waypoints for a single axis with changing bounds and infeasible start state for the second waypoint.  
+- example 3 generates a predefined trajectory with two consecutive waypoints for two axes.  
+- example 4 generates a random trajectory with up to five consecutive waypoints for up to five axes.
 
 
 # Meaning of variables and size of matrices
