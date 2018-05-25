@@ -107,7 +107,7 @@ Should the best solution be returned? See _solution_in_ for details.
 This only affects trajectories that start in an infeasible (outside of allowed velocity or acceleration margins) state. If the start velocity is infeasible, should we return to the allowed bounds as fast as possible (b_hard_vel_limit ==  true) resulting in the shortest possible time outside the limits, or is it allowed to stay outside a little longer for shortest total time and a smoother trajectory. See also example 2.
 
 ### b_catch_up
-Should later synchronized axes try to catch up with unsycnhronizted previous axes? So, should they catch up in time to resynchronize again?
+Should later synchronized axes try to catch up with unsynchronized previous axes? So, should they catch up in time to synchronize again?
 
 ### solution_in
 Each trajectory connecting two waypoints for a single axis can be one of 24 cases (time-optimal) and one of 28 cases (synchronized). If _b_best_solution_ is set to false, not all cases are tried to find a solution for the problem, but when a solution is found, return. If you know the case beforehand (e.g. from a previous run with similar waypoints), you can provide the initial case here. If the case is not suitable for the problem however, the method will try the other cases until it finds a solution. Set _solution_in_ to -1 if you have no clue about the possible case.
