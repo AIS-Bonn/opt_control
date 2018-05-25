@@ -48,7 +48,7 @@ Given that the trajectory consists of m axes and n consecutive waypoints, the va
 | b_rotate         | bool   | (1 x n)     |
 | b_best_solution  | bool   | (m x n)     |
 | b_hard_vel_limit | bool   | (m x n)     |
-| b_hard_catch_up  | bool   | (m x n)     |
+| b_catch_up       | bool   | (m x n)     |
 | solution_in      | double | (m x 2 x n) |
 |                  |        |             |
 | J_setp_struct    | struct | (m x 1)     |
