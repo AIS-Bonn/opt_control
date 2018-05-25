@@ -48,6 +48,7 @@ Given that the trajectory consists of m axes and n consecutive waypoints, the va
 | b_rotate         | bool   | (1 x n)     |
 | b_best_solution  | bool   | (m x n)     |
 | b_hard_vel_limit | bool   | (m x n)     |
+| b_hard_catch_up  | bool   | (m x n)     |
 | solution_in      | double | (m x 2 x n) |
 |                  |        |             |
 | J_setp_struct    | struct | (m x 1)     |
@@ -87,13 +88,13 @@ Global acceleration. This can be for example constant sidewind when controlling 
 Should global acceleration be compensated?
 
 ### b_sync_V
-Should the velocity of faster axes be reduced to synchronize with the slowest axis. When both, b_sync_V and b_sync_A are switched on, the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
+Should the velocity of faster axes be reduced to synchronize with the slowest axis. When both, b_sync_V and b_sync_A are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
 
 ### b_sync_A
-Should the acceleration of faster axes be reduced to synchronize with the slowest axis? When both, b_sync_V and b_sync_A are switched on, the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
+Should the acceleration of faster axes be reduced to synchronize with the slowest axis? When both, b_sync_V and b_sync_A are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
 
 ### b_sync_W
-Should all axes be synchronized by waiting? This means that faster axes wait before starting or after finishing at the waypoint for the slowest axis. This only works when waypoint velocity and acceleration is zero of either the start- or target waypoint.
+Should all axes be synchronized by waiting? This means that faster axes wait before starting or after finishing at the waypoint for the slowest axis. This only works when waypoint velocity and acceleration is zero of either the start- or target waypoint. This setting superceeds b_sync_V and b_sync_A, since it is computationally much cheaper. So when b_sync_W is true, the settings of b_sync_V and b_sync_A are ignored and it is synchronized by waiting.
 
 ### b_rotate
 Rotate the axes so that the x-axis points into the direction of movement between waypoints. This only makes sense with more than one axis. Considering a 3-dimensional trajectory (x,y,z), the coordinate system is rotated about the z-axis.
@@ -104,6 +105,9 @@ Should the best solution be returned? See _solution_in_ for details.
 
 ### b_hard_vel_limit
 This only affects trajectories that start in an infeasible (outside of allowed velocity or acceleration margins) state. If the start velocity is infeasible, should we return to the allowed bounds as fast as possible (b_hard_vel_limit ==  true) resulting in the shortest possible time outside the limits, or is it allowed to stay outside a little longer for shortest total time and a smoother trajectory. See also example 2.
+
+### b_catch_up
+Should later synchronized axes try to catch up with unsycnhronizted previous axes? So, should they catch up in time to resynchronize again?
 
 ### solution_in
 Each trajectory connecting two waypoints for a single axis can be one of 24 cases (time-optimal) and one of 28 cases (synchronized). If _b_best_solution_ is set to false, not all cases are tried to find a solution for the problem, but when a solution is found, return. If you know the case beforehand (e.g. from a previous run with similar waypoints), you can provide the initial case here. If the case is not suitable for the problem however, the method will try the other cases until it finds a solution. Set _solution_in_ to -1 if you have no clue about the possible case.
