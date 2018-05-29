@@ -1,4 +1,4 @@
-![Example Trajectory Image](https://raw.githubusercontent.com/AIS-Bonn/opt_control/master/example.eps)
+![Example Trajectory Image](https://raw.githubusercontent.com/AIS-Bonn/opt_control/master/example.png)
 
 
 # opt_control - Time-optimal Trajectory Generation and Control
