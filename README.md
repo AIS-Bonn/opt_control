@@ -1,6 +1,3 @@
-![Example Trajectory Image](https://raw.githubusercontent.com/AIS-Bonn/opt_control/master/example.png)
-
-
 # opt_control - Time-optimal Trajectory Generation and Control
 **opt_control** generates time-optimal third order trajectories with constant jerk, resulting in bang-singular-bang trajectories.
 The trajectories respect per-axis constraints on minimum and maximum velocity, acceleration and jerk.
@@ -9,6 +6,7 @@ Since the method is very fast (<<1ms), it can be used in closed loop even for fa
 With the ability to predict the target state, trajectories end in an optimal interception point when the waypoint is non-stationary.
 It has been successfully used on different micro aerial vehicles, in different research projects and robotic competitions.
 
+![Example Trajectory Image](https://raw.githubusercontent.com/AIS-Bonn/opt_control/master/example.png)
 
 # Papers describing the Approach
 Marius Beul and Sven Behnke: [Fast Full State Trajectory Generation for Multirotors](http://ais.uni-bonn.de/papers/ICUAS_2017_Beul_Trajectory_Generation.pdf)  
