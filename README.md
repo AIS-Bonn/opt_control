@@ -21,10 +21,11 @@ In Proceedings of International Conference on Unmanned Aircraft Systems (ICUAS),
 run `opt_control_example` in MATLAB.
 The variable `index_example` selects the example.
 
-- example 1 generates a predefined trajectory with two consecutive waypoints for a single axis.  
-- example 2 generates a predefined trajectory with two consecutive waypoints for a single axis with changing bounds and infeasible start state for the second waypoint.  
-- example 3 generates a predefined trajectory with two consecutive waypoints for two axes.  
-- example 4 generates a random trajectory with up to five consecutive waypoints for up to five axes.
+- Example 1 generates a predefined trajectory with two consecutive waypoints for a single axis.  
+- Example 2 generates a predefined trajectory with two consecutive waypoints for a single axis with changing bounds and infeasible start state for the second waypoint.  
+- Example 3 generates a predefined second order trajectory with two consecutive waypoints for two axes.  
+- Example 4 generates a predefined synchronized trajectory with two consecutive waypoints for two axes.  
+- Example 5 generates a random trajectory with up to five consecutive waypoints for up to five axes.
 
 
 # Meaning of variables and size of matrices
@@ -62,26 +63,26 @@ Given that the trajectory consists of m axes and n consecutive waypoints, the va
 Start state of the whole trajectory. The state consist of position, velocity and acceleration per axis
 
 ### Waypoints
-List of waypoints the trajectory has to cross. Each waypoint is 5-dimensional, consisting of position, velocity, acceleration, velocity prediction, and acceleration prediction (not functional) per axis.
+List of waypoints the trajectory has to cross. Each waypoint is 5-dimensional, consisting of position, velocity, acceleration, velocity prediction, and acceleration prediction (not functional) per axis.  
 The velocity prediction variable describes the motion of the waypoint. This enables the method to generate interception trajectories. Velocity and acceleration variables are waypoint-centric. This means, if a waypoint is moving, the allocentric velocity in the waypoint is waypoint velocity + waypoint velocity prediction.
 
 ### V_max
-Maximum velocity.
+Maximum velocity per axis per waypoint. The limit is per axis. So, the relative velocity difference of a waypoint can exceed this value, if the waypoint is moving. If any limit is set to Inf, the computation speeds up further, so remove any unnecessary bounds.
 
 ### V_min
-Minimum velocity.
+Minimum velocity per axis per waypoint. The limit is per axis. So, the relative velocity difference of a waypoint can exceed this value, if the waypoint is moving. If any limit is set to Inf, the computation speeds up further, so remove any unnecessary bounds.
 
 ### A_max
-Maximum acceleration.
+Maximum acceleration per axis per waypoint. If any limit is set to Inf, the computation speeds up further, so remove any unnecessary bounds.
 
 ### A_min
-Minimum acceleration.
+Minimum acceleration per axis per waypoint. If any limit is set to Inf, the computation speeds up further, so remove any unnecessary bounds.
 
 ### J_max
-Maximum jerk.
+Maximum jerk per axis per waypoint. By setting this to Inf, the order of the trajectory can be reduced.
 
 ### J_min
-Minimum jerk.
+Minimum jerk per axis per waypoint. By setting this to Inf, the order of the trajectory can be reduced.
 
 ### A_global
 Global acceleration. This can be for example constant sidewind when controlling an MAV.
