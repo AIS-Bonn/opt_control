@@ -2,9 +2,9 @@
 **opt_control** generates time-optimal third order trajectories with constant jerk, resulting in bang-singular-bang trajectories.
 The trajectories respect per-axis constraints on minimum and maximum velocity, acceleration and jerk.
 Individual axes can be coupled by synchronizing the total time of the each trajectory.
-Since the method is very fast (<<1ms), it can be used in closed loop even for fast systems.
+Since the method is very fast (<<1ms per axis per trajectory), it can be used in closed loop even for fast systems.
 With the ability to predict the target state, trajectories end in an optimal interception point when the waypoint is non-stationary.
-It has been successfully used on different micro aerial vehicles, in different research projects and robotic competitions.
+The method has been successfully used as model predictive controller on different micro aerial vehicles, in different research projects and robotic competitions.
 
 ![Example Trajectory Image](https://raw.githubusercontent.com/AIS-Bonn/opt_control/master/example.png)
 
@@ -23,9 +23,9 @@ The variable `index_example` selects the example.
 
 - Example 1 generates a predefined trajectory with two consecutive waypoints for a single axis.  
 - Example 2 generates a predefined trajectory with two consecutive waypoints for a single axis with changing bounds and infeasible start state for the second waypoint.  
-- Example 3 generates a predefined second order trajectory with two consecutive waypoints for two axes.  
+- Example 3 generates a predefined second order trajectory with two consecutive waypoints for a single axis.  
 - Example 4 generates a predefined synchronized trajectory with two consecutive waypoints for two axes.  
-- Example 5 generates a random trajectory with up to five consecutive waypoints for up to five axes.
+- Example 5 generates a random trajectory with up to five consecutive waypoints for up to ten axes.
 
 
 # Meaning of variables and size of matrices
@@ -63,20 +63,20 @@ Given that the trajectory consists of m axes and n consecutive waypoints, the va
 Start state of the whole trajectory. The state consist of position, velocity and acceleration per axis
 
 ### Waypoints
-List of waypoints the trajectory has to cross. Each waypoint is 5-dimensional, consisting of position, velocity, acceleration, velocity prediction, and acceleration prediction (not functional) per axis.  
-The velocity prediction variable describes the motion of the waypoint. This enables the method to generate interception trajectories. Velocity and acceleration variables are waypoint-centric. This means, if a waypoint is moving, the allocentric velocity in the waypoint is waypoint velocity + waypoint velocity prediction.
+List of waypoints the trajectory has to cross. Each waypoint is 5-dimensional, consisting of position, velocity, acceleration, velocity prediction, and acceleration prediction (currently not functional) per axis.  
+The velocity prediction variable describes the motion of the waypoint. This enables the method to generate interception trajectories. Velocity and acceleration are waypoint-centric. This means, if a waypoint is moving, the allocentric velocity in the waypoint is waypoint velocity + waypoint velocity prediction.
 
 ### V_max
-Maximum velocity per axis per waypoint. The limit is per axis. So, the relative velocity difference of a waypoint can exceed this value, if the waypoint is moving. If any limit is set to Inf, the computation speeds up further, so remove any unnecessary bounds.
+Maximum velocity per axis per waypoint. The limit is per axis. So, the relative velocity difference of a waypoint can exceed this value, if the waypoint is moving. If any limit is set to Inf, the computation of the trajectory speeds up further, so remove any unnecessary bounds.
 
 ### V_min
-Minimum velocity per axis per waypoint. The limit is per axis. So, the relative velocity difference of a waypoint can exceed this value, if the waypoint is moving. If any limit is set to Inf, the computation speeds up further, so remove any unnecessary bounds.
+Minimum velocity per axis per waypoint. The limit is per axis. So, the relative velocity difference of a waypoint can exceed this value, if the waypoint is moving. If any limit is set to Inf, the computation of the trajectory speeds up further, so remove any unnecessary bounds.
 
 ### A_max
-Maximum acceleration per axis per waypoint. If any limit is set to Inf, the computation speeds up further, so remove any unnecessary bounds.
+Maximum acceleration per axis per waypoint. If any limit is set to Inf, the computation of the trajectory speeds up further, so remove any unnecessary bounds.
 
 ### A_min
-Minimum acceleration per axis per waypoint. If any limit is set to Inf, the computation speeds up further, so remove any unnecessary bounds.
+Minimum acceleration per axis per waypoint. If any limit is set to Inf, the computation of the trajectory speeds up further, so remove any unnecessary bounds.
 
 ### J_max
 Maximum jerk per axis per waypoint. By setting this to Inf, the order of the trajectory can be reduced.
@@ -97,17 +97,16 @@ Should the velocity of faster axes be reduced to synchronize with the slowest ax
 Should the acceleration of faster axes be reduced to synchronize with the slowest axis? When both, b_sync_V and b_sync_A are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
 
 ### b_sync_W
-Should all axes be synchronized by waiting? This means that faster axes wait before starting or after finishing at the waypoint for the slowest axis. This only works when waypoint velocity and acceleration is zero of either the start- or target waypoint. This setting superceeds b_sync_V and b_sync_A, since it is computationally much cheaper. So when b_sync_W is true, the settings of b_sync_V and b_sync_A are ignored and it is synchronized by waiting.
+Should all axes be synchronized by waiting? This means that faster axes wait before starting or after finishing at the waypoint for the slowest axis. This only works when waypoint velocity and acceleration is zero of either the start- or target waypoint. This setting superceeds b_sync_V and b_sync_A, since it is computationally much cheaper. So when b_sync_W is true, the settings of b_sync_V and b_sync_A are ignored and it is synchronized by waiting. This setting however results in non-straight multidimensional trajectories.
 
 ### b_rotate
-Rotate the axes so that the x-axis points into the direction of movement between waypoints. This only makes sense with more than one axis. Considering a 3-dimensional trajectory (x,y,z), the coordinate system is rotated about the z-axis.
-
+Rotate the axes so that the x-axis points into the direction of movement between waypoints. This only works with more than one axis. Considering a 3-dimensional trajectory (x,y,z), the coordinate system is rotated about the z-axis.
 
 ### b_best_solution
 Should the best solution be returned? See _solution_in_ for details.
 
 ### b_hard_vel_limit
-This only affects trajectories that start in an infeasible (outside of allowed velocity or acceleration margins) state. If the start velocity is infeasible, should we return to the allowed bounds as fast as possible (b_hard_vel_limit ==  true) resulting in the shortest possible time outside the limits, or is it allowed to stay outside a little longer for shortest total time and a smoother trajectory. See also example 2.
+This only affects trajectories that start in an infeasible (outside of allowed velocity or acceleration margins) state. If the start velocity is infeasible, should we return to the allowed bounds as fast as possible (b_hard_vel_limit ==  true) resulting in the shortest possible time outside the limits, or is it allowed to stay outside a little longer for shortest total time and a smoother trajectory. See also Example 2.
 
 ### b_catch_up
 Should later synchronized axes try to catch up with unsynchronized previous axes? So, should they catch up in time to synchronize again?
@@ -119,7 +118,7 @@ Each trajectory connecting two waypoints for a single axis can be one of 24 case
 This variable outputs the switching times of the trajectory with the corresponding jerks. This is why we do all the math...!
 
 ### solution_out
-This encodes the case of the time-optimal and synchronized trajectories.
+This encodes the cases of the time-optimal and synchronized trajectories.
 
 ### T_waypoints
 This variable gives the incremental times between waypoints for each axis.

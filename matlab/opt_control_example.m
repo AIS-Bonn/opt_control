@@ -31,7 +31,7 @@
 
 clearvars;
 %% ----------   Variables    ----------
-index_example = 5;
+index_example = 1;
 
 switch index_example
     case 1
