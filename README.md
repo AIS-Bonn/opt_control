@@ -1,3 +1,5 @@
+![Example Trajectory Image](https://raw.githubusercontent.com/AIS-Bonn/opt_control/master/example.eps)
+
 
 # opt_control - Time-optimal Trajectory Generation and Control
 **opt_control** generates time-optimal third order trajectories with constant jerk, resulting in bang-singular-bang trajectories.
