@@ -66,7 +66,7 @@ size_waypoints = 150;
 %figure;
 %clf;
 set(gcf,'units','pixels','Resize','off','Position',resolution);
-set(gcf,'MenuBar','none');
+%set(gcf,'MenuBar','none');
 
 num_axes = size(Waypoints,1);
 num_trajectories = size(Waypoints,3);
