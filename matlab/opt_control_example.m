@@ -1,3 +1,11 @@
+------------------------------------------------------------------------
+% File:       opt_control_example.m
+% Version:    2018-06-06 14:54:06
+% Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
+% Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
+% License:    BSD
+------------------------------------------------------------------------
+
 % Software License Agreement (BSD License)
 % Copyright (c) 2018, Computer Science Institute VI, University of Bonn
 % All rights reserved.
@@ -28,10 +36,11 @@
 % LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 % ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
+------------------------------------------------------------------------
 
 clearvars;
 %% ----------   Variables    ----------
-index_example = 1;
+index_example = 5;
 
 switch index_example
     case 1
@@ -97,7 +106,7 @@ switch index_example
         A_global         = [ 0.0;
                              0.0];
     case 5
-        rng(16);
+        rng(6);
         num_axes         = randi(10);
         num_trajectories = randi(5);
 
@@ -141,6 +150,7 @@ b_rotate             = false(1,num_trajectories);
 b_best_solution      =  true(num_axes,num_trajectories);
 b_hard_vel_limit     = false(num_axes,num_trajectories);
 b_catch_up           =  true(num_axes,num_trajectories);
+
 
 %% ----------   Calculate    ----------
 solution_in       = -1 * ones(num_axes,2,num_trajectories,'int8');

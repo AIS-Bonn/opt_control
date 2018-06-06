@@ -1,5 +1,5 @@
 # opt_control - Time-optimal Trajectory Generation and Control
-**opt_control** generates time-optimal third order trajectories with constant jerk, resulting in bang-singular-bang trajectories.
+**opt_control** generates time-optimal second- and third order trajectories from arbitrary start- to arbitrary target states.
 The trajectories respect per-axis constraints on minimum and maximum velocity, acceleration and jerk.
 Individual axes can be coupled by synchronizing the total time of the each trajectory.
 Since the method is very fast (<<1ms per axis per trajectory), it can be used in closed loop even for fast systems.

@@ -1,3 +1,11 @@
+------------------------------------------------------------------------
+% File:       rollout.m
+% Version:    2018-06-06 14:54:06
+% Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
+% Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
+% License:    BSD
+------------------------------------------------------------------------
+
 % Software License Agreement (BSD License)
 % Copyright (c) 2018, Computer Science Institute VI, University of Bonn
 % All rights reserved.
@@ -28,6 +36,7 @@
 % LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 % ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
+------------------------------------------------------------------------
 
 function [P,V,A,J] = rollout(P_init,V_init,A_init,J_setp_struct,T,ts) %#codegen
 
