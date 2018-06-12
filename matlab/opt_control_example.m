@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
 % File:       opt_control_example.m
-% Version:    2018-06-08 09:08:59
+% Version:    2018-06-12 15:24:37
 % Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 % Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 % License:    BSD
@@ -145,6 +145,7 @@ end
 b_comp_global    = false;
 b_sync_V         =  true(num_axes,num_trajectories);
 b_sync_A         =  true(num_axes,num_trajectories);
+b_sync_J         = false(num_axes,num_trajectories);
 b_sync_W         =  true(num_axes,num_trajectories);
 b_rotate         = false(1,num_trajectories);
 b_best_solution  =  true(num_axes,num_trajectories);
@@ -156,7 +157,7 @@ b_catch_up       =  true(num_axes,num_trajectories);
 solution_in  = -1 * ones(num_axes,2,num_trajectories,'int8');
 
 tic;
-[J_setp_struct,solution_out,T_waypoints,~] = opt_control_mex(State_start,Waypoints,V_max,V_min,A_max,A_min,J_max,J_min,A_global,b_comp_global,b_sync_V,b_sync_A,b_sync_W,false(num_axes,num_trajectories),b_rotate,b_best_solution,b_hard_vel_limit,b_catch_up,ones(num_axes,8,1),ones(num_axes,1),zeros(num_axes,1),zeros(num_axes,1),solution_in);                                                              
+[J_setp_struct,solution_out,T_waypoints,~] = opt_control_mex(State_start,Waypoints,V_max,V_min,A_max,A_min,J_max,J_min,A_global,b_comp_global,b_sync_V,b_sync_A,b_sync_J,b_sync_W,false(num_axes,num_trajectories),b_rotate,b_best_solution,b_hard_vel_limit,b_catch_up,ones(num_axes,8,1),ones(num_axes,1),zeros(num_axes,1),zeros(num_axes,1),solution_in);                                                              
 toc;
 
 

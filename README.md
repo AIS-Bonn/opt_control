@@ -1,7 +1,7 @@
 # opt_control - Time-optimal Trajectory Generation and Control
 **opt_control** generates time-optimal second- and third order trajectories from arbitrary start- to arbitrary target states.
 The trajectories respect per-axis constraints on minimum and maximum velocity, acceleration and jerk.
-Individual axes can be coupled by synchronizing the total time of the each trajectory.
+Individual axes can be coupled by synchronizing the total time of each trajectory.
 Since the method is very fast (<<1ms per axis per trajectory), it can be used in closed loop even for fast systems.
 With the ability to predict the target state, trajectories end in an optimal interception point when the waypoint is non-stationary.
 The method has been successfully used as model predictive controller on different micro aerial vehicles, in different research projects and robotic competitions.
@@ -15,6 +15,20 @@ In Proceedings of International Conference on Unmanned Aircraft Systems (ICUAS),
 Marius Beul and Sven Behnke: [Analytical Time-optimal Trajectory Generation and Control for Multirotors](http://ais.uni-bonn.de/papers/ICUAS_2016_Beul.pdf)  
 In Proceedings of International Conference on Unmanned Aircraft Systems (ICUAS), Arlington, VA, USA, June 2016
 
+
+# How to cite?
+```
+@INPROCEEDINGS{beul2017icuas,
+  author = {Marius Beul and Sven Behnke},
+  title = {Fast Full State Trajectory Generation for Multirotors},
+  booktitle = {Proceedings of International Conference on Unmanned Aircraft Systems (ICUAS)},
+  year = 2017,
+  month = 6,
+  address = {Miami, FL, USA},
+  doi = {10.1109/ICUAS.2017.7991304},
+  url = {https://github.com/AIS-Bonn/opt_control}
+}
+```
 
 
 # Getting started
@@ -47,6 +61,7 @@ Given that the trajectory consists of m axes and n consecutive waypoints, the va
 | b_comp_global    | bool   | (1 x 1)     |
 | b_sync_V         | bool   | (m x n)     |
 | b_sync_A         | bool   | (m x n)     |
+| b_sync_J         | bool   | (m x n)     |
 | b_sync_W         | bool   | (m x n)     |
 | b_rotate         | bool   | (1 x n)     |
 | b_best_solution  | bool   | (m x n)     |
@@ -91,10 +106,13 @@ Global acceleration. This can be for example constant sidewind when controlling 
 Should global acceleration be compensated?
 
 ### b_sync_V
-Should the velocity of faster axes be reduced to synchronize with the slowest axis. When both, b_sync_V and b_sync_A are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
+Should the velocity of faster axes be reduced to synchronize with the slowest axis. When b_sync_V, b_sync_A, and b_sync_J are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
 
 ### b_sync_A
-Should the acceleration of faster axes be reduced to synchronize with the slowest axis? When both, b_sync_V and b_sync_A are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
+Should the acceleration of faster axes be reduced to synchronize with the slowest axis? When b_sync_V, b_sync_A, and b_sync_J are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen.
+
+### b_sync_J
+Should the jerk of faster axes be reduced to synchronize with the slowest axis? When b_sync_V, b_sync_A, and b_sync_J are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen. This feature is currently not functional.
 
 ### b_sync_W
 Should all axes be synchronized by waiting? This means that faster axes wait before starting or after finishing at the waypoint for the slowest axis. This only works when waypoint velocity and acceleration is zero of either the start- or target waypoint. This setting superceeds b_sync_V and b_sync_A, since it is computationally much cheaper. So when b_sync_W is true, the settings of b_sync_V and b_sync_A are ignored and it is synchronized by waiting. This setting however results in non-straight multidimensional trajectories.
@@ -128,8 +146,8 @@ This variable gives the incremental times between waypoints for each axis.
 
 **opt_control** is licensed under the BSD 3-clause license.
 
-# Contact
 
+# Contact
 ```
 Marius Beul <mbeul@ais.uni-bonn.de>
 Institute of Computer Science VI
