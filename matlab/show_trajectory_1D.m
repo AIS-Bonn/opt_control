@@ -1,10 +1,10 @@
-------------------------------------------------------------------------
+%------------------------------------------------------------------------
 % File:       show_trajectory_1D.m
 % Version:    2018-06-12 15:24:37
 % Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 % Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 % License:    BSD
-------------------------------------------------------------------------
+%------------------------------------------------------------------------
 
 % Software License Agreement (BSD License)
 % Copyright (c) 2018, Computer Science Institute VI, University of Bonn
@@ -36,7 +36,7 @@
 % LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 % ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
-------------------------------------------------------------------------
+%------------------------------------------------------------------------
 
 if (~exist('resolution','var'))
     resolution = [-2880 1620 2880 1620];
