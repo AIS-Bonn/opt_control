@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------
-% File:       opt_control_example.m
-% Version:    2018-06-12 15:24:37
+% File:       example.m
+% Version:    2018-08-28 16:47:19
 % Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 % Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 % License:    BSD
@@ -105,7 +105,20 @@ switch index_example
                             -1.0 -1.0];
         A_global         = [ 0.0;
                              0.0];
-    case 5
+     case 5
+        num_axes         = 1;
+        num_trajectories = 2;
+        State_start      = [ 0.0  0.0  0.0];
+        Waypoints(:,:,1) = [ 2.0  NaN  NaN  0.0  0.0];
+        Waypoints(:,:,2) = [ 0.0  0.0  0.0  0.0  0.0];
+        V_max            = [ 1.0  1.0];
+        V_min            = [-1.0 -1.0];
+        A_max            = [ 0.5  0.5];
+        A_min            = [-0.5 -0.5];
+        J_max            = [ 1.0  1.0];
+        J_min            = [-1.0 -1.0];
+        A_global         =   0.0;
+    case 6
         rng(6);
         num_axes         = randi(10);
         num_trajectories = randi(5);
@@ -151,25 +164,19 @@ b_rotate         = false(1,num_trajectories);
 b_best_solution  =  true(num_axes,num_trajectories);
 b_hard_vel_limit = false(num_axes,num_trajectories);
 b_catch_up       =  true(num_axes,num_trajectories);
+solution_in      = -1 * ones(num_axes,2,num_trajectories,'int16');
+ts_rollout       = 0.01;
 
 
 %% ----------   Calculate    ----------
-solution_in  = -1 * ones(num_axes,2,num_trajectories,'int8');
-
 tic;
-[J_setp_struct,solution_out,T_waypoints,~] = opt_control_mex(State_start,Waypoints,V_max,V_min,A_max,A_min,J_max,J_min,A_global,b_comp_global,b_sync_V,b_sync_A,b_sync_J,b_sync_W,false(num_axes,num_trajectories),b_rotate,b_best_solution,b_hard_vel_limit,b_catch_up,ones(num_axes,8,1),ones(num_axes,1),zeros(num_axes,1),zeros(num_axes,1),solution_in);                                                              
+[J_setp_struct,solution_out,T_waypoints,P,V,A,J,t] = opt_control_lib_mex(State_start,Waypoints,V_max,V_min,A_max,A_min,J_max,J_min,A_global,b_comp_global,b_sync_V,b_sync_A,b_sync_J,b_sync_W,b_rotate,b_best_solution,b_hard_vel_limit,b_catch_up,solution_in,ts_rollout);
 toc;
-
 
 
 %% ----------     Output     ----------
 disp(['num_axes = ',num2str(num_axes)]);
 disp(['num_trajectories = ',num2str(num_trajectories)]);
-
-ts_rollout = 0.01;
-T_rollout = max(sum(T_waypoints,2));
-[P,V,A,J] = rollout(State_start(:,1),State_start(:,2),State_start(:,3)+A_global*b_comp_global,J_setp_struct,T_rollout,ts_rollout);
-
 show_trajectory_1D;
 
 

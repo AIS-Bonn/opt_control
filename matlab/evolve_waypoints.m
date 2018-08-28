@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------
 % File:       evolve_waypoints.m
-% Version:    2018-06-12 15:24:37
+% Version:    2018-08-28 16:47:19
 % Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 % Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 % License:    BSD

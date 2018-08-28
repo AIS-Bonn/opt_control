@@ -39,7 +39,8 @@ The variable `index_example` selects the example.
 - Example 2 generates a predefined trajectory with two consecutive waypoints for a single axis with changing bounds and infeasible start state for the second waypoint.  
 - Example 3 generates a predefined second order trajectory with two consecutive waypoints for a single axis.  
 - Example 4 generates a predefined synchronized trajectory with two consecutive waypoints for two axes.  
-- Example 5 generates a random trajectory with up to five consecutive waypoints for up to ten axes.
+- Example 5 generates a predefined trajectory with two consecutive waypoints for a single axis with undefined (NaN) components of the first waypoint.  
+- Example 6 generates a random trajectory with up to five consecutive waypoints for up to ten axes.
 
 
 # Meaning of variables and size of matrices
@@ -67,10 +68,10 @@ Given that the trajectory consists of m axes and n consecutive waypoints, the va
 | b_best_solution  | bool   | (m x n)     |
 | b_hard_vel_limit | bool   | (m x n)     |
 | b_catch_up       | bool   | (m x n)     |
-| solution_in      | double | (m x 2 x n) |
+| solution_in      | int16  | (m x 2 x n) |
 |                  |        |             |
 | J_setp_struct    | struct | (m x 1)     |
-| solution_out     | double | (m x 2 x n) |
+| solution_out     | int16  | (m x 2 x n) |
 | T_waypoints      | double | (m x n)     |
 
 
@@ -79,6 +80,7 @@ Start state of the whole trajectory. The state consist of position, velocity and
 
 ### Waypoints
 List of waypoints the trajectory has to cross. Each waypoint is 5-dimensional, consisting of position, velocity, acceleration, velocity prediction, and acceleration prediction (currently not functional) per axis.  
+Waypoints can have undefined (NaN) components, but at least one derivative (position, velocity or acceleration) has to be defined. Undefined components will be chosen so that the trajectory is time-optimal and does not violate constraints.
 The velocity prediction variable describes the motion of the waypoint. This enables the method to generate interception trajectories. Velocity and acceleration are waypoint-centric. This means, if a waypoint is moving, the allocentric velocity in the waypoint is waypoint velocity + waypoint velocity prediction.
 
 ### V_max
@@ -115,7 +117,7 @@ Should the acceleration of faster axes be reduced to synchronize with the slowes
 Should the jerk of faster axes be reduced to synchronize with the slowest axis? When b_sync_V, b_sync_A, and b_sync_J are switched on (and b_sync_W switched off), the trajectory with the smallest deviation from the time-optimal trajectory is chosen. This feature is currently not functional.
 
 ### b_sync_W
-Should all axes be synchronized by waiting? This means that faster axes wait before starting or after finishing at the waypoint for the slowest axis. This only works when waypoint velocity and acceleration is zero of either the start- or target waypoint. This setting superceeds b_sync_V and b_sync_A, since it is computationally much cheaper. So when b_sync_W is true, the settings of b_sync_V and b_sync_A are ignored and it is synchronized by waiting. This setting however results in non-straight multidimensional trajectories.
+Should all axes be synchronized by waiting? This means that faster axes wait before starting or after finishing at the waypoint for the slowest axis. This only works when velocity and acceleration of either the start- or target state is zero. This setting superceeds b_sync_V, b_sync_A, and b_sync_J, since it is computationally much cheaper. So when b_sync_W is true, the settings of b_sync_V, b_sync_A, and b_sync_J are ignored and it is synchronized by waiting. This setting however results in non-straight multidimensional trajectories.
 
 ### b_rotate
 Rotate the axes so that the x-axis points into the direction of movement between waypoints. This only works with more than one axis. Considering a 3-dimensional trajectory (x,y,z), the coordinate system is rotated about the z-axis.

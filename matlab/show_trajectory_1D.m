@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------
 % File:       show_trajectory_1D.m
-% Version:    2018-06-12 15:24:37
+% Version:    2018-08-28 16:47:19
 % Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 % Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 % License:    BSD
@@ -67,6 +67,7 @@ color_viapoint = [0.5 0.5 0.5];
 color_obstacle = [0.5 0.5 0.5];
 color_limit    = [1.0 0.0 0.0];
 color_marker   = [0.0 0.0 0.0];
+alpha_limit    = 0.05;
 size_marker    = 30;
 size_waypoints = 150;
 
@@ -85,12 +86,12 @@ axislimits(:,1) = 0;
 axislimits(:,2) = T_rollout;
 for index_axis = 1:num_axes
     if (size(b_plot_axis,1) >= index_axis && b_plot_axis(index_axis) == true)
-        axislimits(1,3) = min(axislimits(1,3),min(P(index_axis).signals.values));
-        axislimits(1,4) = max(axislimits(1,4),max(P(index_axis).signals.values));
-        axislimits(2,3) = min(axislimits(2,3),min(V(index_axis).signals.values));
-        axislimits(2,4) = max(axislimits(2,4),max(V(index_axis).signals.values));
-        axislimits(3,3) = min(axislimits(3,3),min(A(index_axis).signals.values));
-        axislimits(3,4) = max(axislimits(3,4),max(A(index_axis).signals.values));
+        axislimits(1,3) = min(axislimits(1,3),min(P(index_axis,:)));
+        axislimits(1,4) = max(axislimits(1,4),max(P(index_axis,:)));
+        axislimits(2,3) = min(axislimits(2,3),min(V(index_axis,:)));
+        axislimits(2,4) = max(axislimits(2,4),max(V(index_axis,:)));
+        axislimits(3,3) = min(axislimits(3,3),min(A(index_axis,:)));
+        axislimits(3,4) = max(axislimits(3,4),max(A(index_axis,:)));
         axislimits(4,3) = min(axislimits(4,3),min(J_setp_struct(index_axis).signals.values));
         axislimits(4,4) = max(axislimits(4,4),max(J_setp_struct(index_axis).signals.values));
     end
@@ -103,7 +104,7 @@ h1 = subplot(4,1,1);
     axis manual;
     for index_axis = 1:num_axes
         if (size(b_plot_axis,1) >= index_axis && b_plot_axis(index_axis) == true)
-            stairs(P(index_axis).time,P(index_axis).signals.values,'Color','black');
+            stairs(t(index_axis,:),P(index_axis,:),'Color','black');
             scatter(0,State_start(index_axis,1),size_waypoints,color_start,'Marker','o','MarkerFaceColor',color_start);
             for index_waypoint = 1:1:num_trajectories
                 if (index_waypoint == num_trajectories)
@@ -155,7 +156,7 @@ h2 = subplot(4,1,2);
     axis manual;
     for index_axis = 1:num_axes
         if (size(b_plot_axis,1) >= index_axis && b_plot_axis(index_axis) == true) 
-            stairs(V(index_axis).time,V(index_axis).signals.values,'Color','black');
+            stairs(t(index_axis,:),V(index_axis,:),'Color','black');
             scatter(0,State_start(index_axis,2),size_waypoints,color_start,'Marker','o','MarkerFaceColor',color_start);
             for index_waypoint = 1:1:num_trajectories
                 if (index_waypoint == num_trajectories)
@@ -165,8 +166,13 @@ h2 = subplot(4,1,2);
                 end
                 T_old = sum(T_waypoints(index_axis,1:index_waypoint-1));
                 T = sum(T_waypoints(index_axis,1:index_waypoint));
+                if (index_waypoint > 1)
+                    line([T_old T_old],[V_max(index_axis,index_waypoint),V_max(index_axis,index_waypoint-1)],'Color',color_limit); 
+                end
                 line([T_old T],[V_max(index_axis,index_waypoint),V_max(index_axis,index_waypoint)],'Color',color_limit);
                 line([T_old T],[V_min(index_axis,index_waypoint),V_min(index_axis,index_waypoint)],'Color',color_limit);
+                patch([T_old, T_old, T, T],[V_max(index_axis,index_waypoint),max(axislimits(2,4),V_max(index_axis,index_waypoint)),max(axislimits(2,4),V_max(index_axis,index_waypoint)),V_max(index_axis,index_waypoint)],color_limit,'EdgeAlpha',0,'FaceAlpha',alpha_limit);
+                patch([T_old, T_old, T, T],[V_min(index_axis,index_waypoint),min(axislimits(2,3),V_min(index_axis,index_waypoint)),min(axislimits(2,3),V_min(index_axis,index_waypoint)),V_min(index_axis,index_waypoint)],color_limit,'EdgeAlpha',0,'FaceAlpha',alpha_limit);
                 scatter(0,Waypoints(index_axis,2,index_waypoint)+Waypoints(index_axis,4,index_waypoint),size_waypoints,color,'Marker','o','MarkerFaceColor',color);
                 Waypoint_evolved = evolve_waypoints(Waypoints(:,:,index_waypoint),T);
                 scatter(T,Waypoint_evolved(index_axis,2),size_waypoints,color,'Marker','o','MarkerFaceColor',color,'MarkerFaceAlpha',0.0);
@@ -191,7 +197,7 @@ h3 = subplot(4,1,3);
     axis manual;
     for index_axis = 1:num_axes
         if (size(b_plot_axis,1) >= index_axis && b_plot_axis(index_axis) == true)
-            stairs(A(index_axis).time,A(index_axis).signals.values,'Color','black');
+            stairs(t(index_axis,:),A(index_axis,:),'Color','black');
             scatter(0,State_start(index_axis,3),size_waypoints,color_start,'Marker','o','MarkerFaceColor',color_start);
             for index_waypoint = 1:1:num_trajectories
                 if (index_waypoint == num_trajectories)
@@ -201,8 +207,14 @@ h3 = subplot(4,1,3);
                 end
                 T_old = sum(T_waypoints(index_axis,1:index_waypoint-1));
                 T = sum(T_waypoints(index_axis,1:index_waypoint));
+                if (index_waypoint > 1)
+                    line([T_old T_old],[A_max(index_axis,index_waypoint),A_max(index_axis,index_waypoint-1)],'Color',color_limit); 
+                end
                 line([T_old T],[A_max(index_axis,index_waypoint),A_max(index_axis,index_waypoint)],'Color',color_limit);
                 line([T_old T],[A_min(index_axis,index_waypoint),A_min(index_axis,index_waypoint)],'Color',color_limit);
+                patch([T_old, T_old, T, T],[A_max(index_axis,index_waypoint),max(axislimits(3,4),A_max(index_axis,index_waypoint)),max(axislimits(3,4),A_max(index_axis,index_waypoint)),A_max(index_axis,index_waypoint)],color_limit,'EdgeAlpha',0,'FaceAlpha',alpha_limit);
+                patch([T_old, T_old, T, T],[A_min(index_axis,index_waypoint),min(axislimits(3,3),A_min(index_axis,index_waypoint)),min(axislimits(3,3),A_min(index_axis,index_waypoint)),A_min(index_axis,index_waypoint)],color_limit,'EdgeAlpha',0,'FaceAlpha',alpha_limit);
+                line([T_old T],[0 0],'Color','black','LineStyle',':');
                 scatter(0,Waypoints(index_axis,3,index_waypoint),size_waypoints,color,'Marker','o','MarkerFaceColor',color);
                 Waypoint_evolved = evolve_waypoints(Waypoints(:,:,index_waypoint),T);
                 scatter(T,Waypoint_evolved(index_axis,3),size_waypoints,color,'Marker','o','MarkerFaceColor',color,'MarkerFaceAlpha',0.0);
@@ -227,12 +239,17 @@ h4 = subplot(4,1,4);
     axis manual;
     for index_axis = 1:num_axes
         if (size(b_plot_axis,1) >= index_axis && b_plot_axis(index_axis) == true)
-            stairs(J(index_axis).time,J(index_axis).signals.values,'Color','black');
+            stairs(t(index_axis,:),J(index_axis,:),'Color','black');
             for index_waypoint = 1:1:num_trajectories
                 T_old = sum(T_waypoints(index_axis,1:index_waypoint-1));
                 T = sum(T_waypoints(index_axis,1:index_waypoint));
+                if (index_waypoint > 1)
+                    line([T_old T_old],[J_max(index_axis,index_waypoint),J_max(index_axis,index_waypoint-1)],'Color',color_limit); 
+                end
                 line([T_old T],[J_max(index_axis,index_waypoint),J_max(index_axis,index_waypoint)],'Color',color_limit);
                 line([T_old T],[J_min(index_axis,index_waypoint),J_min(index_axis,index_waypoint)],'Color',color_limit);
+                patch([T_old, T_old, T, T],[J_max(index_axis,index_waypoint),max(axislimits(4,4),J_max(index_axis,index_waypoint)),max(axislimits(4,4),J_max(index_axis,index_waypoint)),J_max(index_axis,index_waypoint)],color_limit,'EdgeAlpha',0,'FaceAlpha',alpha_limit);
+                patch([T_old, T_old, T, T],[J_min(index_axis,index_waypoint),min(axislimits(4,3),J_min(index_axis,index_waypoint)),min(axislimits(4,3),J_min(index_axis,index_waypoint)),J_min(index_axis,index_waypoint)],color_limit,'EdgeAlpha',0,'FaceAlpha',alpha_limit);
             end
             for index_times = 2:1:size(J_setp_struct(index_axis).time,1)
                 line([J_setp_struct(index_axis).time(index_times,1) J_setp_struct(index_axis).time(index_times,1)],[axislimits(4,3) axislimits(4,4)],'Color','black','LineStyle',':');

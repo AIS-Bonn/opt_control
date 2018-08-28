@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------
 % File:       evaluate_to_time.m
-% Version:    2018-06-12 15:24:37
+% Version:    2018-08-28 16:47:19
 % Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 % Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 % License:    BSD
@@ -38,10 +38,16 @@
 % POSSIBILITY OF SUCH DAMAGE.
 %------------------------------------------------------------------------
 
-function [P,V,A,J] = evaluate_to_time(P_init,V_init,A_init,J_setp_struct,T) %#codegen
+function [P,V,A,J] = evaluate_to_time(P_init,V_init,A_init,J_setp_struct,T_in) %#codegen
 
     num_axes = size(J_setp_struct,2);
-
+    
+    if (num_axes > 1 && size(T_in,1) == 1)
+        T = repmat(T_in,num_axes,1);
+    else
+        T = T_in;
+    end
+    
     P = zeros(num_axes,1);
     V = zeros(num_axes,1);
     A = zeros(num_axes,1);
@@ -49,14 +55,14 @@ function [P,V,A,J] = evaluate_to_time(P_init,V_init,A_init,J_setp_struct,T) %#co
 
     for index_axis = 1:num_axes
 
-        if (T > J_setp_struct(index_axis).time(end))
-            J_setp_struct(index_axis).time = vertcat(J_setp_struct(index_axis).time,T);
+        if (T(index_axis) > J_setp_struct(index_axis).time(end))
+            J_setp_struct(index_axis).time = vertcat(J_setp_struct(index_axis).time,T(index_axis));
             J_setp_struct(index_axis).signals.values = horzcat(J_setp_struct(index_axis).signals.values,0);
         end
 
-        index_setp_max = find(J_setp_struct(index_axis).time<=T,1,'last');
+        index_setp_max = find(J_setp_struct(index_axis).time<=T(index_axis),1,'last');
         
-        t_remaining = cat(2,diff(J_setp_struct(index_axis).time(1:index_setp_max(1,1),1))',T - J_setp_struct(index_axis).time(index_setp_max(1,1),1));
+        t_remaining = cat(2,diff(J_setp_struct(index_axis).time(1:index_setp_max(1,1),1))',T(index_axis) - J_setp_struct(index_axis).time(index_setp_max(1,1),1));
         J_remaining = J_setp_struct(index_axis).signals.values(1,1:index_setp_max(1,1));
 
         [P_eval,V_eval,A_eval] = evaluate(t_remaining,J_remaining,P_init(index_axis),V_init(index_axis),A_init(index_axis));

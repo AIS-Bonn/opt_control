@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------
 % File:       evaluate.m
-% Version:    2018-06-12 15:24:37
+% Version:    2018-08-28 16:47:19
 % Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 % Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 % License:    BSD
@@ -47,9 +47,14 @@ function [P,V,A] = evaluate(t,J,P_init,V_init,A_init) %#codegen
     A = ones(1,num_setpoints) * (A_init + t(1) * J(1));
 
     for index_setpoint = 2:num_setpoints
-        P(index_setpoint) = polyval([1/6*J(index_setpoint) 1/2*A(index_setpoint-1) V(index_setpoint-1) P(index_setpoint-1)],t(index_setpoint));
-        V(index_setpoint) = polyval([1/2*J(index_setpoint) A(index_setpoint-1) V(index_setpoint-1)],t(index_setpoint));
-        A(index_setpoint) = polyval([J(index_setpoint) A(index_setpoint-1)],t(index_setpoint));
+        t_curr = t(index_setpoint);
+        J_curr = J(index_setpoint);
+        %P(index_setpoint) = polyval([1/6*J(index_setpoint) 1/2*A(index_setpoint-1) V(index_setpoint-1) P(index_setpoint-1)],t(index_setpoint));
+        P(index_setpoint) = P(index_setpoint-1) + t_curr * V(index_setpoint-1) + 1/2 * t_curr^2 * A(index_setpoint-1) + 1/6 * t_curr^3 * J_curr;
+        %V(index_setpoint) = polyval([1/2*J(index_setpoint) A(index_setpoint-1) V(index_setpoint-1)],t(index_setpoint));
+        V(index_setpoint) = V(index_setpoint-1) + t_curr * A(index_setpoint-1) + 1/2 * t_curr^2 * J_curr;
+        %A(index_setpoint) = polyval([J(index_setpoint) A(index_setpoint-1)],t(index_setpoint));
+        A(index_setpoint) = A(index_setpoint-1) + t_curr * J_curr;
     end
 
 end
