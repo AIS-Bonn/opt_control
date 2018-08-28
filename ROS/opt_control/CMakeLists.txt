@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
+# set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -54,8 +55,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  Solution.msg
-  Waypointsblabla.msg
+  Waypoints.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -152,7 +152,7 @@ add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
-  ${CMAKE_SOURCE_DIR}/lib/opt_control.a
+  ${CMAKE_SOURCE_DIR}/lib/opt_control_lib.a
   ${catkin_LIBRARIES}
 )
 
