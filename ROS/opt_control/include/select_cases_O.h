@@ -1,13 +1,42 @@
-/*
- * Student License - for use by students to meet course requirements and
- * perform academic research at degree granting institutions only.  Not
- * for government, commercial, or other organizational use.
- *
- * select_cases_O.h
- *
- * Code generation for function 'select_cases_O'
- *
- */
+//------------------------------------------------------------------------
+// File:       select_cases_O.h
+// Version:    2018-08-29 11:36:48
+// Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
+// Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
+// License:    BSD
+//------------------------------------------------------------------------
+
+// Software License Agreement (BSD License)
+// Copyright (c) 2018, Computer Science Institute VI, University of Bonn
+// All rights reserved.
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 
+// * Redistributions of source code must retain the above copyright
+//   notice, this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above
+//   copyright notice, this list of conditions and the following
+//   disclaimer in the documentation and/or other materials provided
+//   with the distribution.
+// * Neither the name of University of Bonn, Computer Science Institute
+//   VI nor the names of its contributors may be used to endorse or
+//   promote products derived from this software without specific
+//   prior written permission.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+// BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+// LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//------------------------------------------------------------------------
 
 #ifndef SELECT_CASES_O_H
 #define SELECT_CASES_O_H
@@ -27,5 +56,3 @@ extern void select_cases_O(double V_init, double A_init, double V_wayp, double
   short cases_data[], int cases_size[2]);
 
 #endif
-
-/* End of code generation (select_cases_O.h) */

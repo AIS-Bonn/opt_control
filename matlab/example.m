@@ -1,6 +1,6 @@
 %------------------------------------------------------------------------
 % File:       example.m
-% Version:    2018-08-28 17:17:57
+% Version:    2018-08-29 10:37:04
 % Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 % Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 % License:    BSD
