@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------
 // File:       abcefg_O_AP.h
-// Version:    2018-08-29 12:42:43
+// Version:    2018-08-29 12:53:20
 // Maintainer: Marius Beul (mbeul@ais.uni-bonn.de)
 // Package:    opt_control (https://github.com/AIS-Bonn/opt_control)
 // License:    BSD
@@ -50,6 +50,6 @@
 /* Function Declarations */
 extern void abcefg_O_AP(double P_init, double V_init, double A_init, double
   P_wayp, double A_wayp, double V_max, double A_max, double A_min, double J_max,
-  double J_min, creal_T t[14]);d
+  double J_min, creal_T t[14]);
 
 #endif
