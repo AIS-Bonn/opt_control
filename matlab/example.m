@@ -177,6 +177,7 @@ toc;
 %% ----------     Output     ----------
 disp(['num_axes = ',num2str(num_axes)]);
 disp(['num_trajectories = ',num2str(num_trajectories)]);
+T_rollout = max(sum(T_waypoints,2));
 show_trajectory_1D;
 
 
