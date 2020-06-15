@@ -40,7 +40,6 @@ fig.suptitle('Full State over Time')
 
 
 
-
 # Many motions to stop at (1,1,1)
 N = 100
 p0 = np.random.uniform(-1, 1, (N,3))
@@ -75,14 +74,17 @@ for jj in range(3):
         a, v, p = min_time_bvp.switch_states(p0[i], v0[i], a0[i], t, j)
         st, sj, sa, sv, sp = min_time_bvp.sample_min_time_bvp(p0[i], v0[i], a0[i], t, j, dt=0.01)
 
+        if not np.allclose(p1, sp[:,-1]):
+            print('\nFailed.')
+            print(p0[i])
+            print(v0[i])
+            print(a0[i])
+
         axes[jj].plot(sp[0,:], sp[1,:])
     axes[jj].set_xlim((-0.2, 1.2))
     axes[jj].set_ylim((-0.2, 1.2))
     axes[jj].axis('equal')
 fig.suptitle('Motions to stop at (1,1,1)')
-
-
-
 
 
 # Show plots.
