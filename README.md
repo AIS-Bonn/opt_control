@@ -1,3 +1,11 @@
+# Information about this fork:
+
+## Added features.
+- Python interface for solving min time state-to-state problem.
+
+## Building
+- Run 'make' in directory 'py_opt_control.'
+
 # opt_control - Time-optimal Trajectory Generation and Control
 **opt_control** generates time-optimal second- and third order trajectories from arbitrary start- to arbitrary target states.
 The trajectories respect per-axis constraints on minimum and maximum velocity, acceleration and jerk.
