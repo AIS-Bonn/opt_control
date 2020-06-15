@@ -61,24 +61,32 @@ def min_time_bvp(
         v_min, v_max, a_min, a_max, j_min, j_max,
         t, j)
 
-    # Remove redundant steps in the control sequence and trim the fixed size array.
+    # Remove redundant steps in the control sequence and trim the fixed size
+    # array. The output of the C library call is a little odd -- signals need to
+    # be applied in the original order, and nearly-identical times might not
+    # necessarily appear in chronological order.
     t_list = []
     j_list = []
     n_steps = 0
     for i in range(3):
         mask = np.logical_not(np.isnan(t[i,:]))
-        (value, first_index, count) = np.unique(t[i,mask], return_index=True, return_counts=True)
+        (_, first_index, count) = np.unique(t[i,mask], return_index=True, return_counts=True)
         last_index = first_index + count - 1
+        last_index.sort()
         t_list.append(t[i,last_index])
         j_list.append(j[i,last_index])
-        n_steps = max(n_steps, value.size)
-
+    n_steps = max(len(tl) for tl in t_list)
     t_final = np.zeros((3, n_steps))
     j_final = np.zeros((3, n_steps))
     for i in range(3):
         n = len(t_list[i])
         t_final[i,-n:] = t_list[i]
         j_final[i,-n:] = j_list[i]
+
+    # print(np.diff(t[2,:]))
+    # print(np.diff(t_final[2,:]))
+    # print(np.stack((t[2,:], j[2,:]), axis=1))
+    # print(np.stack((t_final[2,:], j_final[2,:]), axis=1))
 
     return t_final, j_final
 
