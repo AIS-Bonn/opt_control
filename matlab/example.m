@@ -40,7 +40,7 @@
 
 clearvars;
 %% ----------   Variables    ----------
-index_example = 1;
+index_example = 7;
 
 switch index_example
     case 1
@@ -151,6 +151,36 @@ switch index_example
         PA_waypoints     = reshape(PA_waypoint_min+(PA_waypoint_max-PA_waypoint_min).*rand(num_axes,num_trajectories),num_axes,1,num_trajectories);
         Waypoints        = cat(2,P_waypoints,V_waypoints,A_waypoints,PV_waypoints,PA_waypoints);
         
+    case 7
+        num_axes         = 3;
+        num_trajectories = 1;
+        State_start      = [ -0.7  0.0  0.0;
+                              0.8  0.0  0.0;
+                             -0.9  0.0  0.0];
+        Waypoints(:,:,1) = [ 1.0  0.0  0.0  0.0  0.0;
+                             1.0  0.0  0.0  0.0  0.0;
+                             1.0  0.0  0.0  0.0  0.0];
+        V_max            = [ 10.0;
+                             10.0;
+                             10.0];
+        V_min            = [-10.0;
+                            -10.0;
+                            -10.0];
+        A_max            = [ 5;
+                             5;
+                             5];
+        A_min            = [-5;
+                            -5;
+                            -5];
+        J_max            = [ 100.0;
+                             100.0;
+                             100.0];
+        J_min            = [-100.0;
+                            -100.0;
+                            -100.0];
+        A_global         = [ 0.0;
+                             0.0;
+                             0.0];
     otherwise
         disp('please select a valid example!');
 end
@@ -159,7 +189,7 @@ b_comp_global    = false;
 b_sync_V         =  true(num_axes,num_trajectories);
 b_sync_A         =  true(num_axes,num_trajectories);
 b_sync_J         = false(num_axes,num_trajectories);
-b_sync_W         =  true(num_axes,num_trajectories);
+b_sync_W         =  false(num_axes,num_trajectories);
 b_rotate         = false(1,num_trajectories);
 b_best_solution  =  true(num_axes,num_trajectories);
 b_hard_vel_limit = false(num_axes,num_trajectories);
@@ -180,7 +210,11 @@ disp(['num_trajectories = ',num2str(num_trajectories)]);
 T_rollout = max(sum(T_waypoints,2));
 show_trajectory_1D;
 
-
+%% Display time and jerk events.
+for k=1:3
+    fprintf('axis %i\n', k)
+    disp([J_setp_struct(k).time, J_setp_struct(k).signals.values'])
+end
 
 
 
