@@ -36,8 +36,8 @@ a1 = a1[:n_dim]
 
 fig, axes = plt.subplots(2, 2)
 axes = axes.flatten()
-hard_indices = []
 for jj in range(3):
+    hard_indices = []
     if jj == 0:
         v0 = 0 * v0_master
         a0 = 0 * a0_master
@@ -75,9 +75,9 @@ for jj in range(3):
     axes[jj].set_xlim((-0.2, 1.2))
     axes[jj].set_ylim((-0.2, 1.2))
     axes[jj].axis('equal')
+    print(f"Failed {len(hard_indices)}/{N} tests.")
 fig.suptitle('Motions to stop at (1,1,1)')
 
-print(f"Failed {len(hard_indices)}/{N} tests.")
 
 # Show plots.
 plt.show()
