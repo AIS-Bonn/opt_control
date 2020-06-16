@@ -3,6 +3,7 @@
 #include "opt_control_lib_terminate.h"
 #include "opt_control_lib_emxAPI.h"
 #include "opt_control_lib_initialize.h"
+#include <iostream>
 
 /* Function Declarations */
 static emxArray_boolean_T *argInit_1xUnbounded_boolean_T();
@@ -12,13 +13,9 @@ static emxArray_int16_T *c_argInit_Unboundedx2xUnbounded();
 static emxArray_real_T *c_argInit_Unboundedx5xUnbounded();
 static emxArray_boolean_T *c_argInit_UnboundedxUnbounded_b();
 static emxArray_real_T *c_argInit_UnboundedxUnbounded_r();
-// static void main_opt_control_lib();
 
-#define num_axes 3
 #define num_traj 1
 #define out_stride 32
-
-double A_global[num_axes] = {0, 0, 0};
 
 bool b_sync_V = true;
 bool b_sync_A = true;
@@ -47,7 +44,7 @@ static emxArray_boolean_T *argInit_1xUnbounded_boolean_T()
   return result;
 }
 
-static emxArray_real_T *argInit_Unboundedx1_real_T()
+static emxArray_real_T *argInit_Unboundedx1_real_T(int num_axes)
 {
   emxArray_real_T *result;
   static int iv180[1] = { num_axes };
@@ -59,7 +56,7 @@ static emxArray_real_T *argInit_Unboundedx1_real_T()
   return result;
 }
 
-static emxArray_real_T *argInit_Unboundedx3_real_T()
+static emxArray_real_T *argInit_Unboundedx3_real_T(int num_axes)
 {
   emxArray_real_T *result;
   static int iv177[2] = { num_axes, 3 };
@@ -74,7 +71,7 @@ static emxArray_real_T *argInit_Unboundedx3_real_T()
   return result;
 }
 
-static emxArray_int16_T *c_argInit_Unboundedx2xUnbounded()
+static emxArray_int16_T *c_argInit_Unboundedx2xUnbounded(int num_axes)
 {
   emxArray_int16_T *result;
   static int iv183[3] = { num_axes, 2, num_traj };
@@ -92,7 +89,7 @@ static emxArray_int16_T *c_argInit_Unboundedx2xUnbounded()
   return result;
 }
 
-static emxArray_real_T *c_argInit_Unboundedx5xUnbounded()
+static emxArray_real_T *c_argInit_Unboundedx5xUnbounded(int num_axes)
 {
   emxArray_real_T *result;
   static int iv178[3] = { num_axes, 5, num_traj };
@@ -110,7 +107,7 @@ static emxArray_real_T *c_argInit_Unboundedx5xUnbounded()
   return result;
 }
 
-static emxArray_boolean_T *c_argInit_UnboundedxUnbounded_b()
+static emxArray_boolean_T *c_argInit_UnboundedxUnbounded_b(int num_axes)
 {
   emxArray_boolean_T *result;
   static int iv181[2] = { num_axes, num_traj };
@@ -125,7 +122,7 @@ static emxArray_boolean_T *c_argInit_UnboundedxUnbounded_b()
   return result;
 }
 
-static emxArray_real_T *c_argInit_UnboundedxUnbounded_r()
+static emxArray_real_T *c_argInit_UnboundedxUnbounded_r(int num_axes)
 {
   emxArray_real_T *result;
   static int iv179[2] = { num_axes, num_traj };
@@ -142,6 +139,7 @@ static emxArray_real_T *c_argInit_UnboundedxUnbounded_r()
 
 extern "C"
 void min_time_bvp(
+    int num_axes,
     double* p0, double* v0, double* a0,
     double* p1, double* v1, double* a1,
     double V_min, double V_max,
@@ -192,24 +190,24 @@ void min_time_bvp(
   emxInitArray_real_T(&t_rollout, 2);
 
 
-  State_start_in = argInit_Unboundedx3_real_T();
-  Waypoints_in = c_argInit_Unboundedx5xUnbounded();
-  V_max_in = c_argInit_UnboundedxUnbounded_r();
-  V_min_in = c_argInit_UnboundedxUnbounded_r();
-  A_max_in = c_argInit_UnboundedxUnbounded_r();
-  A_min_in = c_argInit_UnboundedxUnbounded_r();
-  J_max_in = c_argInit_UnboundedxUnbounded_r();
-  J_min_in = c_argInit_UnboundedxUnbounded_r();
-  A_global_in = argInit_Unboundedx1_real_T();
-  b_sync_V_in = c_argInit_UnboundedxUnbounded_b();
-  b_sync_A_in = c_argInit_UnboundedxUnbounded_b();
-  b_sync_J_in = c_argInit_UnboundedxUnbounded_b();
-  b_sync_W_in = c_argInit_UnboundedxUnbounded_b();
+  State_start_in = argInit_Unboundedx3_real_T(num_axes);
+  Waypoints_in = c_argInit_Unboundedx5xUnbounded(num_axes);
+  V_max_in = c_argInit_UnboundedxUnbounded_r(num_axes);
+  V_min_in = c_argInit_UnboundedxUnbounded_r(num_axes);
+  A_max_in = c_argInit_UnboundedxUnbounded_r(num_axes);
+  A_min_in = c_argInit_UnboundedxUnbounded_r(num_axes);
+  J_max_in = c_argInit_UnboundedxUnbounded_r(num_axes);
+  J_min_in = c_argInit_UnboundedxUnbounded_r(num_axes);
+  A_global_in = argInit_Unboundedx1_real_T(num_axes);
+  b_sync_V_in = c_argInit_UnboundedxUnbounded_b(num_axes);
+  b_sync_A_in = c_argInit_UnboundedxUnbounded_b(num_axes);
+  b_sync_J_in = c_argInit_UnboundedxUnbounded_b(num_axes);
+  b_sync_W_in = c_argInit_UnboundedxUnbounded_b(num_axes);
   b_rotate_in = argInit_1xUnbounded_boolean_T();
-  b_best_solution_in = c_argInit_UnboundedxUnbounded_b();
-  b_hard_vel_limit_in = c_argInit_UnboundedxUnbounded_b();
-  b_catch_up_in = c_argInit_UnboundedxUnbounded_b();
-  solution_in = c_argInit_Unboundedx2xUnbounded();
+  b_best_solution_in = c_argInit_UnboundedxUnbounded_b(num_axes);
+  b_hard_vel_limit_in = c_argInit_UnboundedxUnbounded_b(num_axes);
+  b_catch_up_in = c_argInit_UnboundedxUnbounded_b(num_axes);
+  solution_in = c_argInit_Unboundedx2xUnbounded(num_axes);
 
   for (int idx_axis = 0; idx_axis < num_axes; idx_axis++) {
 
@@ -228,7 +226,7 @@ void min_time_bvp(
       J_max_in->data[idx_axis] = J_max;
       J_min_in->data[idx_axis] = J_min;
 
-      A_global_in->data[idx_axis]  = A_global[idx_axis];
+      A_global_in->data[idx_axis]  = 0;
       b_comp_global_in             = b_comp_global;
       b_sync_V_in->data[idx_axis] = b_sync_V;
       b_sync_A_in->data[idx_axis] = b_sync_A;
@@ -240,7 +238,9 @@ void min_time_bvp(
       b_catch_up_in->data[idx_axis]             = b_catch_up;
   }
 
-
+  // State_start_in->data[0 + State_start_in->size[0] * 0] = 0.6;
+  // State_start_in->data[1 + State_start_in->size[0] * 0] = 0.9;
+  // std::cout << State_start_in->data[3];
 
     opt_control_lib(
         State_start_in,

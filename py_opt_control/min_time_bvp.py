@@ -1,15 +1,16 @@
 import numpy as np
 import numpy.ctypeslib as npct
-from ctypes import c_double
+from ctypes import c_double, c_int32
 
 # Load the library, using numpy mechanisms.
 libcd = npct.load_library("lib_min_time_bvp", ".")
 
 # Setup the return types and argument types.
-array_1d_double = npct.ndpointer(dtype=np.double, ndim=1, flags='CONTIGUOUS')
-array_2d_double = npct.ndpointer(dtype=np.double, ndim=2, flags='CONTIGUOUS')
+array_1d_double = npct.ndpointer(dtype=np.double, ndim=1, flags=('C_CONTIGUOUS'))
+array_2d_double = npct.ndpointer(dtype=np.double, ndim=2, flags=('C_CONTIGUOUS'))
 libcd.min_time_bvp.restype = None
 libcd.min_time_bvp.argtypes = [
+    c_int32,
     array_1d_double, array_1d_double, array_1d_double,
     array_1d_double, array_1d_double, array_1d_double,
     c_double, c_double, c_double, c_double, c_double, c_double,
@@ -49,13 +50,16 @@ def min_time_bvp(
     prepended by multiple coincident time=0, jerk=0 segments.
     """
 
+    n_dim = p0.size
+
     # The interface uses an excess fixed sized array for the output control steps.
     stride = 32 # Excess size.
-    t = np.full((3,stride), np.nan, dtype=np.float64)
-    j = np.full((3,stride), np.nan, dtype=np.float64)
+    t = np.full((n_dim,stride), np.nan, dtype=np.float64)
+    j = np.full((n_dim,stride), np.nan, dtype=np.float64)
 
     # Call to C++ implementation.
     libcd.min_time_bvp(
+        n_dim,
         p0, v0, a0,
         p1, v1, a1,
         v_min, v_max, a_min, a_max, j_min, j_max,
@@ -68,7 +72,7 @@ def min_time_bvp(
     t_list = []
     j_list = []
     n_steps = 0
-    for i in range(3):
+    for i in range(n_dim):
         mask = np.logical_not(np.isnan(t[i,:]))
         (_, first_index, count) = np.unique(t[i,mask], return_index=True, return_counts=True)
         last_index = first_index + count - 1
@@ -76,9 +80,9 @@ def min_time_bvp(
         t_list.append(t[i,last_index])
         j_list.append(j[i,last_index])
     n_steps = max(len(tl) for tl in t_list)
-    t_final = np.zeros((3, n_steps))
-    j_final = np.zeros((3, n_steps))
-    for i in range(3):
+    t_final = np.zeros((n_dim, n_steps))
+    j_final = np.zeros((n_dim, n_steps))
+    for i in range(n_dim):
         n = len(t_list[i])
         t_final[i,-n:] = t_list[i]
         j_final[i,-n:] = j_list[i]
@@ -109,7 +113,7 @@ def switch_states(p0, v0, a0, t, j):
     For axis i at time t[i,k] the state is (p[i,k], v[i,k], a[i,k]) and a
     constant jerk segment with value j[i,k] is initiated.
     """
-    n_axis   = p0.shape[0]
+    n_axis   = p0.size
     n_switch = t.shape[1] # number of switch states
 
 
@@ -159,7 +163,9 @@ def sample_min_time_bvp(p0, v0, a0, t, j, dt):
 
     # Allocate dense samples over time, jerk, acceleration, velocity, position.
     st = np.arange(t[0,0], end_t, dt)
-    if st[-1] != end_t:
+    if st.size == 0: # Should only happen when initial and final states are equal.
+        st = np.append(st, 0)
+    if st[-1] != end_t: # The final sample time gets exactly to the end state.
         st = np.append(st, end_t)
     n_sample = st.size
     sj = np.full((n_axis, n_sample), np.nan)
