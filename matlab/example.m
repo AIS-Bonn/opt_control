@@ -40,7 +40,7 @@
 
 clearvars;
 %% ----------   Variables    ----------
-index_example = 7;
+index_example = 8;
 
 switch index_example
     case 1
@@ -181,6 +181,27 @@ switch index_example
         A_global         = [ 0.0;
                              0.0;
                              0.0];
+    case 8
+        num_axes         = 2;
+        num_trajectories = 1;
+        State_start      = [ 0.6  0.0  0.0;
+                             0.9  0.0  0.0];
+        Waypoints(:,:,1) = [ 1.0  0.0  0.0  0.0  0.0;
+                             1.0  0.0  0.0  0.0  0.0];
+        V_max            = [ 10.0;
+                             10.0];
+        V_min            = [-10.0;
+                            -10.0];
+        A_max            = [ 5;
+                             5];
+        A_min            = [-5;
+                            -5];
+        J_max            = [ 100.0;
+                             100.0];
+        J_min            = [-100.0;
+                            -100.0];
+        A_global         = [ 0.0;
+                             0.0];
     otherwise
         disp('please select a valid example!');
 end
@@ -211,7 +232,7 @@ T_rollout = max(sum(T_waypoints,2));
 show_trajectory_1D;
 
 %% Display time and jerk events.
-for k=1:3
+for k=1:num_axes
     fprintf('axis %i\n', k)
     disp([J_setp_struct(k).time, J_setp_struct(k).signals.values'])
 end
