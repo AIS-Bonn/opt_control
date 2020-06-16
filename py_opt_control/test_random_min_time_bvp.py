@@ -18,7 +18,7 @@ j_max = 100
 
 # Random initial states.
 decimal_places = 1
-N = 1000
+N = 50
 p0 = np.random.uniform(0, 1, (N,n_dim))
 v0_master = np.random.uniform(0, 1, (N,n_dim))
 a0_master = np.random.uniform(0, 1, (N,n_dim))
@@ -71,7 +71,6 @@ for jj in range(3):
             axes[jj].plot(sp[0,:], sp[1,:])
         else:
             axes[jj].plot(sp[0,:], np.zeros_like(sp[0,:]))
-
 
     axes[jj].set_xlim((-0.2, 1.2))
     axes[jj].set_ylim((-0.2, 1.2))

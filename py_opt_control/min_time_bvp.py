@@ -116,7 +116,6 @@ def switch_states(p0, v0, a0, t, j):
     n_axis   = p0.size
     n_switch = t.shape[1] # number of switch states
 
-
     p = np.zeros((n_axis, n_switch))
     v = np.zeros((n_axis, n_switch))
     a = np.zeros((n_axis, n_switch))
@@ -161,29 +160,31 @@ def sample_min_time_bvp(p0, v0, a0, t, j, dt):
     end_t = t[:,-1].max()
     t[:,-1] = end_t
 
-    # Allocate dense samples over time, jerk, acceleration, velocity, position.
-    st = np.arange(t[0,0], end_t, dt)
-    if st.size == 0: # Should only happen when initial and final states are equal.
-        st = np.append(st, 0)
-    if st[-1] != end_t: # The final sample time gets exactly to the end state.
-        st = np.append(st, end_t)
-    n_sample = st.size
-    sj = np.full((n_axis, n_sample), np.nan)
-    sa = np.full((n_axis, n_sample), np.nan)
-    sv = np.full((n_axis, n_sample), np.nan)
-    sp = np.full((n_axis, n_sample), np.nan)
-
     # Accurate states at exact switching times.
     a, v, p = switch_states(p0, v0, a0, t, j)
 
-    # Samples
-    for n in range(n_axis):
-        for i in range(n_switch-1):
-            mask = np.logical_and(t[n,i] <= st, st <= t[n,i+1])
-            dt = st[mask] - t[n,i]
-            sp[n,mask] = 1/6*j[n,i]*dt**3 + 1/2*a[n,i]*dt**2 + v[n,i]*dt + p[n,i]
-            sv[n,mask] = 1/2*j[n,i]*dt**2 +     a[n,i]*dt    + v[n,i]
-            sa[n,mask] =     j[n,i]*dt    +     a[n,i]
-            sj[n,mask] =     j[n,i]
+    if t.shape[1] > 1:
+        # Allocate dense samples over time, jerk, acceleration, velocity, position.
+        st = np.arange(t[0,0], end_t, dt)
+        if st[-1] != end_t: # The final sample time gets exactly to the end state.
+            st = np.append(st, end_t)
+        n_sample = st.size
+        sj = np.full((n_axis, n_sample), np.nan)
+        sa = np.full((n_axis, n_sample), np.nan)
+        sv = np.full((n_axis, n_sample), np.nan)
+        sp = np.full((n_axis, n_sample), np.nan)
+
+        # Samples
+        for n in range(n_axis):
+            for i in range(n_switch-1):
+                mask = np.logical_and(t[n,i] <= st, st <= t[n,i+1])
+                dt = st[mask] - t[n,i]
+                sp[n,mask] = 1/6*j[n,i]*dt**3 + 1/2*a[n,i]*dt**2 + v[n,i]*dt + p[n,i]
+                sv[n,mask] = 1/2*j[n,i]*dt**2 +     a[n,i]*dt    + v[n,i]
+                sa[n,mask] =     j[n,i]*dt    +     a[n,i]
+                sj[n,mask] =     j[n,i]
+    else:
+        # No sampling needed for zero time solution.
+        st, sj, sa, sv, sp = t, j, a, v, p
 
     return st, sj, sa, sv, sp
