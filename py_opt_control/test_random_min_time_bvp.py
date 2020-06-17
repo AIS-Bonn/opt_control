@@ -2,12 +2,15 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+
 import min_time_bvp
 
 def compute_many_mp(p0, v0, a0, p1, v1, a1, params):
     """
     Compute and verify many motion primitives.
     """
+    start_time = time.time()
     n_mp = p0.shape[0]
     mp = []
     for i in range(n_mp):
@@ -20,13 +23,14 @@ def compute_many_mp(p0, v0, a0, p1, v1, a1, params):
         st, sj, sa, sv, sp = min_time_bvp.sample_min_time_bvp(p0[i], v0[i], a0[i], t, j, dt=0.01)
         is_valid = np.allclose(p1[i], sp[:,-1])
         if not is_valid:
-            print('\nTest failed: end position is wrong. Initial condition:')
-            print(p0[i])
-            print(v0[i])
-            print(a0[i])
+            print()
+            print('Test failed. The end position is wrong. Problem data:')
+            print(f"(p0, v0, v0) = {(p0[i], v0[i], a0[i])}")
+            print(f"(p1, v1, v1) = {(p1[i], v1[i], a1[i])}")
             print()
         mp.append({'p0':p0[i], 'v0':v0[i], 'a0':a0[i], 't':t, 'j':j, 'is_valid':is_valid})
-    return mp
+    sec = (time.time() - start_time)/n_mp
+    return mp, sec
 
 
 def plot_2d_projection_many_mp(ax, mp):
@@ -54,9 +58,13 @@ def test_to_zero(n_dim, params, n_tests, ax):
     p1 = np.zeros((n_tests,n_dim))
     v1 = np.zeros((n_tests,n_dim))
     a1 = np.zeros((n_tests,n_dim))
-    mp = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    mp, sec = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    print('\ntest_to_zero')
+    n_failed = sum(1 for m in mp if not m['is_valid'])
+    print(f'  failed: {n_failed/n_tests:5.1%}         ({n_failed}/{n_tests})')
+    print(f'   speed:  {sec*1000:.2f} ms/test')
     plot_2d_projection_many_mp(ax, mp)
-    return sum(1 for m in mp if not m['is_valid'])
+    return n_failed
 
 def test_to_nonzero_p(n_dim, params, n_tests, ax):
     decimal_places = 2
@@ -66,9 +74,13 @@ def test_to_nonzero_p(n_dim, params, n_tests, ax):
     p1 = np.ones((n_tests,n_dim))
     v1 = np.zeros((n_tests,n_dim))
     a1 = np.zeros((n_tests,n_dim))
-    mp = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    mp, sec = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    print('\ntest_to_nonzero_p')
+    n_failed = sum(1 for m in mp if not m['is_valid'])
+    print(f'  failed: {n_failed/n_tests:5.1%}         ({n_failed}/{n_tests})')
+    print(f'   speed:  {sec*1000:.2f} ms/test')
     plot_2d_projection_many_mp(ax, mp)
-    return sum(1 for m in mp if not m['is_valid'])
+    return n_failed
 
 def test_to_nonzero_pv(n_dim, params, n_tests, ax):
     decimal_places = 2
@@ -76,12 +88,16 @@ def test_to_nonzero_pv(n_dim, params, n_tests, ax):
     v0 = np.round(np.random.uniform(-1, 1, (n_tests,n_dim)), decimal_places)
     a0 = np.round(np.random.uniform(-1, 1, (n_tests,n_dim)), decimal_places)
     p1 = np.ones((n_tests,n_dim))
-    v1 = np.ones((n_tests,n_tests))
+    v1 = np.ones((n_tests,n_dim))
     v1[:,1:] = -1
     a1 = np.zeros((n_tests,n_dim))
-    mp = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    mp, sec = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    print('\ntest_to_nonzero_pv')
+    n_failed = sum(1 for m in mp if not m['is_valid'])
+    print(f'  failed: {n_failed/n_tests:5.1%}         ({n_failed}/{n_tests})')
+    print(f'   speed:  {sec*1000:.2f} ms/test')
     plot_2d_projection_many_mp(ax, mp)
-    return sum(1 for m in mp if not m['is_valid'])
+    return n_failed
 
 def test_to_nonzero_pva(n_dim, params, n_tests, ax):
     decimal_places = 2
@@ -89,13 +105,17 @@ def test_to_nonzero_pva(n_dim, params, n_tests, ax):
     v0 = np.round(np.random.uniform(-1, 1, (n_tests,n_dim)), decimal_places)
     a0 = np.round(np.random.uniform(-1, 1, (n_tests,n_dim)), decimal_places)
     p1 = np.ones((n_tests,n_dim))
-    v1 = np.ones((n_tests,n_tests))
+    v1 = np.ones((n_tests,n_dim))
     v1[:,1:] = -1
-    a1 = -np.ones((n_tests,n_tests))
+    a1 = -np.ones((n_tests,n_dim))
     a1[:,1:] = 1
-    mp = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    mp, sec = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    print('\ntest_to_nonzero_pva')
+    n_failed = sum(1 for m in mp if not m['is_valid'])
+    print(f'  failed: {n_failed/n_tests:5.1%}         ({n_failed}/{n_tests})')
+    print(f'   speed:  {sec*1000:.2f} ms/test')
     plot_2d_projection_many_mp(ax, mp)
-    return sum(1 for m in mp if not m['is_valid'])
+    return n_failed
 
 def test_zero_a(n_dim, params, n_tests, ax):
     decimal_places = 2
@@ -103,12 +123,16 @@ def test_zero_a(n_dim, params, n_tests, ax):
     v0 = np.round(np.random.uniform(-1, 1, (n_tests,n_dim)), decimal_places)
     a0 = np.zeros((n_tests,n_dim))
     p1 = np.ones((n_tests,n_dim))
-    v1 = np.ones((n_tests,n_tests))
+    v1 = np.ones((n_tests,n_dim))
     v1[:,1:] = -1
     a1 = np.zeros((n_tests,n_dim))
-    mp = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    mp, sec = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    print('\ntest_zero_a')
+    n_failed = sum(1 for m in mp if not m['is_valid'])
+    print(f'  failed: {n_failed/n_tests:5.1%}         ({n_failed}/{n_tests})')
+    print(f'   speed:  {sec*1000:.2f} ms/test')
     plot_2d_projection_many_mp(ax, mp)
-    return sum(1 for m in mp if not m['is_valid'])
+    return n_failed
 
 def test_zero_va(n_dim, params, n_tests, ax):
     decimal_places = 2
@@ -118,9 +142,13 @@ def test_zero_va(n_dim, params, n_tests, ax):
     p1 = np.ones((n_tests,n_dim))
     v1 = np.zeros((n_tests,n_dim))
     a1 = np.zeros((n_tests,n_dim))
-    mp = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    mp, sec = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    print('\ntest_zero_va')
+    n_failed = sum(1 for m in mp if not m['is_valid'])
+    print(f'  failed: {n_failed/n_tests:5.1%}         ({n_failed}/{n_tests})')
+    print(f'   speed:  {sec*1000:.2f} ms/test')
     plot_2d_projection_many_mp(ax, mp)
-    return sum(1 for m in mp if not m['is_valid'])
+    return n_failed
 
 if __name__ == '__main__':
 
