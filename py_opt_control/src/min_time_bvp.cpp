@@ -17,10 +17,7 @@ static emxArray_real_T *c_argInit_UnboundedxUnbounded_r();
 #define num_traj 1
 #define out_stride 32
 
-bool b_sync_V = true;
-bool b_sync_A = true;
 bool b_sync_J = false;
-bool b_sync_W = true;
 
 bool b_comp_global = false;
 bool b_rotate = false;
@@ -145,6 +142,7 @@ void min_time_bvp(
     double V_min, double V_max,
     double A_min, double A_max,
     double J_min, double J_max,
+    bool sync_V, bool sync_A, bool sync_W,
     double* t,
     double* j){
 
@@ -228,10 +226,10 @@ void min_time_bvp(
 
       A_global_in->data[idx_axis]  = 0;
       b_comp_global_in             = b_comp_global;
-      b_sync_V_in->data[idx_axis] = b_sync_V;
-      b_sync_A_in->data[idx_axis] = b_sync_A;
+      b_sync_V_in->data[idx_axis] = sync_V;
+      b_sync_A_in->data[idx_axis] = sync_A;
       b_sync_J_in->data[idx_axis] = b_sync_J;
-      b_sync_W_in->data[idx_axis] = b_sync_W;
+      b_sync_W_in->data[idx_axis] = sync_W;
       b_rotate_in->data[b_rotate_in->size[0] * idx_axis]  = b_rotate;
       b_best_solution_in->data[idx_axis]   = b_best_solution;
       b_hard_vel_limit_in->data[idx_axis] = b_hard_vel_limit;

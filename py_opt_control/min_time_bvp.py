@@ -1,6 +1,6 @@
 import numpy as np
 import numpy.ctypeslib as npct
-from ctypes import c_double, c_int32
+from ctypes import c_double, c_int32, c_bool
 
 # Load the library, using numpy mechanisms.
 libcd = npct.load_library("lib_min_time_bvp", ".")
@@ -14,12 +14,16 @@ libcd.min_time_bvp.argtypes = [
     array_1d_double, array_1d_double, array_1d_double,
     array_1d_double, array_1d_double, array_1d_double,
     c_double, c_double, c_double, c_double, c_double, c_double,
+    c_bool, c_bool, c_bool,
     array_2d_double, array_2d_double]
 
 def min_time_bvp(
     p0, v0, a0,
     p1, v1, a1,
-    v_min, v_max, a_min, a_max, j_min, j_max):
+    v_min, v_max, a_min, a_max, j_min, j_max,
+    sync_v=True,
+    sync_a=True,
+    sync_w=True):
     """
     Solve the minimum time state-to-state boundary value problem for a triple
     integrator in N dimensions.
@@ -34,6 +38,9 @@ def min_time_bvp(
         v_min, v_max, velocity limits, scalars
         a_min, a_max, acceleration limits, scalars
         j_min, j_max, jerk limits, scalars
+        sync_v, synchronize arrivals by reducing velocities
+        sync_a, synchronize arrivals by reducing accelerations
+        sync_w, synchronize arrivals by waiting (overrides other sync params)
 
     Outputs:
         t, switch times, shape=(N,M)
@@ -51,6 +58,8 @@ def min_time_bvp(
     will be prepended by multiple coincident time=0, jerk=0 segments.
     """
 
+    (p0, v0, a0, p1, v1, a1) = (s.astype(np.float64, copy=False) for s in (p0, v0, a0, p1, v1, a1))
+
     n_dim = p0.size
 
     # The interface uses an excess fixed sized array for the output control steps.
@@ -64,6 +73,7 @@ def min_time_bvp(
         p0, v0, a0,
         p1, v1, a1,
         v_min, v_max, a_min, a_max, j_min, j_max,
+        sync_v, sync_a, sync_w,
         t, j)
 
     # Remove redundant steps in the control sequence and trim the fixed size
