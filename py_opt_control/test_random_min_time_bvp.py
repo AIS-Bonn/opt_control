@@ -163,6 +163,21 @@ def test_state_to_state(n_dim, params, n_tests, ax):
     plot_2d_projection_many_mp(ax, mp)
     return n_failed
 
+def test_point_to_point(n_dim, params, n_tests, ax):
+    p0 = np.round(np.random.uniform(-1, 1, (n_tests,n_dim)), decimal_places)
+    v0 = np.zeros((n_tests,n_dim))
+    a0 = np.zeros((n_tests,n_dim))
+    p1 = np.round(np.random.uniform(-1, 1, (n_tests,n_dim)), decimal_places)
+    v1 = np.zeros((n_tests,n_dim))
+    a1 = np.zeros((n_tests,n_dim))
+    mp, sec = compute_many_mp(p0, v0, a0, p1, v1, a1, params)
+    print('\ntest_point_to_point')
+    n_failed = sum(1 for m in mp if not m['is_valid'])
+    print(f'  failed: {n_failed/n_tests:5.1%}         ({n_failed}/{n_tests})')
+    print(f'   speed:  {sec*1000:.2f} ms/test')
+    plot_2d_projection_many_mp(ax, mp)
+    return n_failed
+
 if __name__ == '__main__':
 
     n_tests = 1000
@@ -213,10 +228,14 @@ if __name__ == '__main__':
     axes[0].set_title(f'Zero A Boundaries, Failed {n_failed}/{n_tests}')
     results['test_zero_a'] = n_failed
 
-    fig, ax = plt.subplots(1, 1)
+    fig, axes = plt.subplots(1, 2)
 
-    n_failed = test_state_to_state(n_dim, params, n_tests, ax)
-    ax.set_title(f'State to State, Failed {n_failed}/{n_tests}')
+    n_failed = test_point_to_point(n_dim, params, n_tests, axes[0])
+    axes[0].set_title(f'Point to Point, Failed {n_failed}/{n_tests}')
+    results['test_point_to_point'] = n_failed
+
+    n_failed = test_state_to_state(n_dim, params, n_tests, axes[1])
+    axes[1].set_title(f'State to State, Failed {n_failed}/{n_tests}')
     results['test_state_to_state'] = n_failed
 
     pp = pprint.PrettyPrinter(indent=4)
