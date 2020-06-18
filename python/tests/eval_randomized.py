@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import time
 import pprint
 
-import min_time_bvp
+from py_opt_control import min_time_bvp
 
 decimal_places = 1
 

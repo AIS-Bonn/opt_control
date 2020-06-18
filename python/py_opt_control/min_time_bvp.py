@@ -3,7 +3,7 @@ import numpy.ctypeslib as npct
 from ctypes import c_double, c_int32, c_bool
 
 # Load the library, using numpy mechanisms.
-libcd = npct.load_library("lib_min_time_bvp", ".")
+libcd = npct.load_library("lib_min_time_bvp", "../build")
 
 # Setup the return types and argument types.
 array_1d_double = npct.ndpointer(dtype=np.double, ndim=1, flags=('C_CONTIGUOUS'))

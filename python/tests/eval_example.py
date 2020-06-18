@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import min_time_bvp
+from py_opt_control import min_time_bvp
 
 # Number of dimensions to test {1, 2, 3}.
 n_dim = 2
