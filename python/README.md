@@ -42,3 +42,9 @@ pip install --upgrade pip
 source ~/venv/opt/bin/activate
 ```
 * Make sure you're in your new virtual environment before installing packages or running scripts.
+
+# Status
+
+* This is a work in progress. The API and packaging are not stable.
+* It is known that some boundary conditions lead to solver failures.
+* The Python interface uses the same underlying .a compiled library as the ROS interface, so any issues related to the solver will affect both. The Matlab interface uses a separate compiled .mex library.
