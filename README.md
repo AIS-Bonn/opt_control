@@ -1,6 +1,6 @@
-# Information about this fork:
+# About this Fork:
 
-This fork primarily adds a Python interface for solving min time state-to-state problem. See the README.md in the python directory for python-specific installation instructions.
+This fork primarily adds a Python interface for solving min time state-to-state problem. See the [README.md](python/README.md) in the python directory for Python-specific installation instructions.
 
 # opt_control - Time-optimal Trajectory Generation and Control
 **opt_control** generates time-optimal second- and third order trajectories from arbitrary start- to arbitrary target states.
