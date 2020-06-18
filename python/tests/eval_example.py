@@ -2,34 +2,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 from py_opt_control import min_time_bvp
 
-# Number of dimensions to test {1, 2, 3}.
-n_dim = 2
-
 # Constants
-v_min = -10
-v_max = 10
-a_min = -5
-a_max = 5
+v_min =  -10
+v_max =   10
+a_min =   -5
+a_max =    5
 j_min = -100
-j_max = 100
-
-# Time series plot of full state.
+j_max =  100
 
 # Hard coded initial and final state.
-p0 = np.array([0, 0.5, 0], dtype=np.float64)
-v0 = np.array([0, 0, 0], dtype=np.float64)
-a0 = np.array([0, 0, 0], dtype=np.float64)
-p1 = np.array([1, 2, -1], dtype=np.float64)
-v1 = np.array([0, 0, 0], dtype=np.float64)
-a1 = np.array([0, 0, 0], dtype=np.float64)
-
-# If n_dim about is not 3, truncate to the desired dimension.
-p0 = p0[:n_dim]
-v0 = p0[:n_dim]
-a0 = p0[:n_dim]
-p1 = p1[:n_dim]
-v1 = p1[:n_dim]
-a1 = p1[:n_dim]
+p0 = np.array([0, 2])
+v0 = np.array([0, 0])
+a0 = np.array([0, 0])
+p1 = np.array([3, 1])
+v1 = np.array([1, 0])
+a1 = np.array([0, 0])
 
 # Compute the jerk input sequence. The initial state (p0, v0, a0) and input
 # sequence (t, j) is the smallest description of a solution trajectory.
