@@ -100,6 +100,36 @@ def min_time_bvp(
 
     return t_final, j_final
 
+def min_time_bvp_paranoia(
+    p0, v0, a0,
+    p1, v1, a1,
+    v_min, v_max, a_min, a_max, j_min, j_max,
+    sync_v=True,
+    sync_a=True,
+    sync_w=True):
+    t, j = min_time_bvp(
+        p0, v0, a0,
+        p1, v1, a1,
+        v_min, v_max, a_min, a_max, j_min, j_max,
+        sync_v,
+        sync_a,
+        sync_w)
+    a, v, p = switch_states(p0, v0, a0, t, j)
+    st, sj, sa, sv, sp = sample_min_time_bvp(p0, v0, a0, t, j, dt=0.01)
+    is_valid = np.allclose(p1, sp[:,-1])
+    if not is_valid:
+        sync_w = not sync_w
+        t, j = min_time_bvp(
+            p0, v0, a0,
+            p1, v1, a1,
+            v_min, v_max, a_min, a_max, j_min, j_max,
+            sync_v,
+            sync_a,
+            sync_w)
+        a, v, p = switch_states(p0, v0, a0, t, j)
+        st, sj, sa, sv, sp = sample_min_time_bvp(p0, v0, a0, t, j, dt=0.01)
+    return t, j
+
 def switch_states(p0, v0, a0, t, j):
     """
     Given an initial state and an input switching sequence, compute the full
