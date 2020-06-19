@@ -12,7 +12,7 @@ These command line examples assume your working directory is already ```opt_cont
 $ make
 ```
 
-* Then install the Python package.
+* Then install the Python package in editable mode from local source.
 
 ```
 $ pip install -e .
