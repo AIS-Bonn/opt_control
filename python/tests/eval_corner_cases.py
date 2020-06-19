@@ -10,13 +10,20 @@ a_max =    5
 j_min = -100
 j_max =  100
 
-# Hard coded initial and final state.
-p0 = np.array([0, 2])
-v0 = np.array([0, 0])
-a0 = np.array([0, 0])
-p1 = np.array([3, 1])
-v1 = np.array([1, 0])
-a1 = np.array([0, 0])
+sync_w = True
+
+example_index = 1
+
+if example_index == 1:
+    # Fails to find timed solution with sync_w=False, works with sync_w=True. Works in Matlab.
+    (p0, v0, a0) = (np.array([ 0.6 ,  0.9]), np.array([0., 0.]), np.array([0., 0.]))
+    (p1, v1, a1) = (np.array([ 1.0,   1.0]), np.array([0., 0.]), np.array([0., 0.]))
+elif example_index == 6:
+    # Core dump in "evaluate_to_time" with both sync_w=False and sync_w=True. Works in Matlab.
+    (p0, v0, a0) = (np.array([ 1.0 , -0.8]), np.array([-1.0,  0.5]), np.array([0., 0.]))
+    (p1, v1, a1) = (np.array([ 1.0,   1.0]), np.array([ 1.0, -1.0]), np.array([0., 0.]))
+else:
+    assert False, "Must select a valid example_index."
 
 # Compute the jerk input sequence. The initial state (p0, v0, a0) and input
 # sequence (t, j) is the smallest description of a solution trajectory.
@@ -24,7 +31,7 @@ a1 = np.array([0, 0])
     p0, v0, a0,
     p1, v1, a1,
     v_min, v_max, a_min, a_max, j_min, j_max,
-    sync_w=False)
+    sync_w=sync_w)
 
 # Analytically integrate the full state at the switching times. Then densely
 # sample the trajectory over time for plotting purposes.
