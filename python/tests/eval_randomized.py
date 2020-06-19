@@ -13,10 +13,15 @@ def compute_many_mp(p0, v0, a0, p1, v1, a1, params):
     """
     Compute and verify many motion primitives.
     """
+    verbose = False
     start_time = time.time()
     n_mp = p0.shape[0]
     mp = []
     for i in range(n_mp):
+        if verbose:
+            print('Preparing to test problem data:')
+            print(f"(p0, v0, a0) = {(p0[i], v0[i], a0[i])}")
+            print(f"(p1, v1, a1) = {(p1[i], v1[i], a1[i])}")
         (t, j) = min_time_bvp.min_time_bvp(
         # (t, j) = min_time_bvp.min_time_bvp_paranoia(
             p0[i], v0[i], a0[i],
