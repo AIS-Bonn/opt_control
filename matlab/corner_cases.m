@@ -24,7 +24,7 @@ b_catch_up_value       = true;
 
 %% Boundary conditions.
 
-index_example = 5;
+index_example = 1;
 
 switch index_example
     case 1
@@ -50,6 +50,11 @@ switch index_example
     case 5
         State_start      = [ 0.4  0.7  0.0;
                              1.0  1.0  0.0];
+        Waypoints(:,:,1) = [ 1.0  1.0  0.0  0.0  0.0;
+                             1.0 -1.0  0.0  0.0  0.0];
+    case 6
+        State_start      = [ 1.0 -1.0  0.0;
+                            -0.8  0.5  0.0];
         Waypoints(:,:,1) = [ 1.0  1.0  0.0  0.0  0.0;
                              1.0 -1.0  0.0  0.0  0.0];
     otherwise
