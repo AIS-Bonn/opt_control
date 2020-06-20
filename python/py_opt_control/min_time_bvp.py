@@ -171,10 +171,11 @@ def switch_states(p0, v0, a0, t, j):
 
     return a, v, p
 
-def sample_min_time_bvp(p0, v0, a0, t, j, dt):
+def sample_min_time_bvp(p0, v0, a0, t, j, dt, st=None):
     """
     Given an initial state and an input switching sequence, compute the full
-    state at sampled times with resolution dt.
+    state at sampled times with resolution dt. If sample times are explicitly
+    specified, those times will be used instead. 
 
     Inputs:
         p0, initial position,     shape=(N,)
@@ -183,6 +184,7 @@ def sample_min_time_bvp(p0, v0, a0, t, j, dt):
         t,  switch times, shape=(N,M)
         j,  jerk,         shape=(N,M)
         dt, time steps
+        st, sample times, shape=(K,) - default to None
     Outputs:
         st, times,        shape=(N,K)
         sj, jerk,         shape=(N,K)
@@ -202,10 +204,11 @@ def sample_min_time_bvp(p0, v0, a0, t, j, dt):
     a, v, p = switch_states(p0, v0, a0, t, j)
 
     if t.shape[1] > 1:
-        # Allocate dense samples over time, jerk, acceleration, velocity, position.
-        st = np.arange(t[0,0], end_t, dt)
-        if st[-1] != end_t: # The final sample time gets exactly to the end state.
-            st = np.append(st, end_t)
+        if st is None:
+            # Allocate dense samples over time, jerk, acceleration, velocity, position.
+            st = np.arange(t[0,0], end_t, dt)
+            if st[-1] != end_t: # The final sample time gets exactly to the end state.
+                st = np.append(st, end_t)
         n_sample = st.size
         sj = np.full((n_axis, n_sample), np.nan)
         sa = np.full((n_axis, n_sample), np.nan)
