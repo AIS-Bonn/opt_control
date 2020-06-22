@@ -151,6 +151,7 @@ def switch_states(p0, v0, a0, t, j):
     For axis i at time t[i,k] the state is (p[i,k], v[i,k], a[i,k]) and a
     constant jerk segment with value j[i,k] is initiated.
     """
+    
     n_axis   = p0.size
     n_switch = t.shape[1] # number of switch states
 
@@ -171,11 +172,10 @@ def switch_states(p0, v0, a0, t, j):
 
     return a, v, p
 
-def sample_min_time_bvp(p0, v0, a0, t, j, dt, st=None):
+def sample(p0, v0, a0, t, j, st):
     """
     Given an initial state and an input switching sequence, compute the full
-    state at sampled times with resolution dt. If sample times are explicitly
-    specified, those times will be used instead. 
+    state at a set of explicitly specified sample times. 
 
     Inputs:
         p0, initial position,     shape=(N,)
@@ -183,8 +183,7 @@ def sample_min_time_bvp(p0, v0, a0, t, j, dt, st=None):
         a0, initial acceleration, shape=(N,)
         t,  switch times, shape=(N,M)
         j,  jerk,         shape=(N,M)
-        dt, time steps
-        st, sample times, shape=(K,) - default to None
+        st, samplle_time, shape=(K,)
     Outputs:
         st, times,        shape=(N,K)
         sj, jerk,         shape=(N,K)
@@ -196,19 +195,10 @@ def sample_min_time_bvp(p0, v0, a0, t, j, dt, st=None):
     n_axis = p0.size
     n_switch = t.shape[1]
 
-    # It is expected that the final t for each axis are identical.
-    end_t = t[:,-1].max()
-    t[:,-1] = end_t
-
     # Accurate states at exact switching times.
     a, v, p = switch_states(p0, v0, a0, t, j)
 
     if t.shape[1] > 1:
-        if st is None:
-            # Allocate dense samples over time, jerk, acceleration, velocity, position.
-            st = np.arange(t[0,0], end_t, dt)
-            if st[-1] != end_t: # The final sample time gets exactly to the end state.
-                st = np.append(st, end_t)
         n_sample = st.size
         sj = np.full((n_axis, n_sample), np.nan)
         sa = np.full((n_axis, n_sample), np.nan)
@@ -228,4 +218,36 @@ def sample_min_time_bvp(p0, v0, a0, t, j, dt, st=None):
         # No sampling needed for zero time solution.
         st, sj, sa, sv, sp = t, j, a, v, p
 
+    return st, sj, sa, sv, sp
+
+def uniformly_sample(p0, v0, a0, t, j, dt):
+    """
+    Given an initial state and an input switching sequence, compute the full
+    state at sampled times with resolution dt. 
+
+    Inputs:
+        p0, initial position,     shape=(N,)
+        v0, initial velocity,     shape=(N,)
+        a0, initial acceleration, shape=(N,)
+        t,  switch times, shape=(N,M)
+        j,  jerk,         shape=(N,M)
+        dt, time resolution
+    Outputs:
+        st, times,        shape=(N,K)
+        sj, jerk,         shape=(N,K)
+        sa, acceleration, shape=(N,K)
+        sv, velocity,     shape=(N,K)
+        sp, position,     shape=(N,K)
+    """
+
+    # It is expected that the final t for each axis are identical.
+    end_t = t[:,-1].max()
+    t[:,-1] = end_t
+    
+    # Allocate dense samples over time, jerk, acceleration, velocity, position.
+    st = np.arange(t[0,0], end_t, dt)
+    if st[-1] != end_t: # The final sample time gets exactly to the end state.
+        st = np.append(st, end_t)
+
+    _, sj, sa, sv, sp = sample(p0, v0, a0, t, j, st)
     return st, sj, sa, sv, sp
